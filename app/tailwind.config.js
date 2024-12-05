@@ -1,9 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}", // This tells Tailwind to scan all your JS/JSX/TS/TSX files inside the src folder
+  ],
   theme: {
     extend: {},
   },
   plugins: [],
 }
-

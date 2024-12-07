@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fontsource/lato": "^5.1.0",
+    "@fontsource/oswald": "^5.1.0",
+    "@fontsource/pacifico": "^5.1.0",
+    "@fontsource/playfair-display": "^5.1.0",
+    "@fontsource/roboto": "^5.1.0",
     "@react-spring/konva": "^9.7.5",
     "@svgr/webpack": "^8.1.0",
     "@testing-library/jest-dom": "^5.17.0",

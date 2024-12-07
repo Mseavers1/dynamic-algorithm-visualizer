@@ -6,7 +6,13 @@ import './App.css';
 // Main Page -- What is displayed across all pages
 function App() {
     return (
-        <div className="bg-wku-red min-h-screen flex flex-col items-center justify-center text-center">
+        <div className="bg-wku-red min-h-screen flex flex-col items-center justify-center text-center relative">
+
+            {/** Grainy Noise Overlay **/}
+            <div className="absolute inset-0 bg-grainy-noise bg-grainy-size bg-grainy-position opacity-20 pointer-events-none"></div>
+
+            {/** Radial Noise Overlay **/}
+            <div className="absolute inset-0 bg-radial-noise opacity-20 pointer-events-none"></div>
 
             {/** Title **/}
             <h1 className="font-playfair text-wkuYellow text-7xl md:text-8xl font-bold mb-8 drop-shadow-lg">
@@ -41,5 +47,6 @@ function App() {
         </div>
     );
 }
+
 
 export default App;

@@ -38,7 +38,7 @@ module.exports = {
         "wkuYellow": '#F1C40F'
       },
       letterSpacing: {
-        'widest-two': '0.4em',
+        'widest-two': '0.20em',
       }
     },
   },

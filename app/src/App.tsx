@@ -22,8 +22,8 @@ function App() {
             <p className="font-roboto text-sm sm:text-base md:text-lg lg:text-2xl text-white font-medium mb-16 tracking-widest-two drop-shadow-[5px_10px_12px_rgba(0,0,0,0.2)]">
                 A <span className="font-playfair font-semibold text-wkuYellow">D</span>ynamic <span
                 className="font-playfair font-semibold text-wkuYellow">A</span>lgorithm <span
-                className="font-playfair font-semibold text-wkuYellow">V</span>isualiz<span
-                className="font-playfair font-semibold text-wkuYellow">E</span>r
+                className="font-playfair font-semibold text-wkuYellow">V</span>isualizer for <span
+                className="font-playfair font-semibold text-wkuYellow">E</span>ducation
             </p>
 
             {/** Buttons **/}

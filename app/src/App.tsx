@@ -18,7 +18,7 @@ function App() {
 
                 {/** Title **/}
                 <h1 className="select-none font-playfair text-wkuYellow text-7xl md:text-8xl font-bold mb-8 drop-shadow-[5px_10px_12px_rgba(0,0,0,0.4)]">
-                    D.A.V.E.
+                    DAVE
                 </h1>
                 <p className="select-none font-roboto text-sm sm:text-base md:text-lg lg:text-2xl text-white font-medium mb-16 tracking-widest-two drop-shadow-[5px_10px_12px_rgba(0,0,0,0.2)]">
                     A <span className="font-playfair font-semibold text-wkuYellow">D</span>ynamic <span

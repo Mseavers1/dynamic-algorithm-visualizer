@@ -1,9 +1,26 @@
 import '@fontsource/roboto';
 import '@fontsource/pacifico';
 import './App.css';
+import {useEffect, useState} from "react";
 
 // Main Page -- What is displayed across all pages
 function App() {
+
+    const [showStickyHeader, setShowStickyHeader] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 700) {
+                setShowStickyHeader(true);
+            } else {
+                setShowStickyHeader(false);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     const handleScrollTo = (id: string) => {
         const aboutSection = document.getElementById(id);
@@ -19,7 +36,8 @@ function App() {
         <div className="bg-wku-red text-center relative">
 
             {/** Grainy Noise Overlay **/}
-            <div className="absolute inset-0 bg-grainy-noise bg-grainy-size bg-grainy-position opacity-20 pointer-events-none"></div>
+            <div
+                className="absolute inset-0 bg-grainy-noise bg-grainy-size bg-grainy-position opacity-20 pointer-events-none"></div>
 
             <div className="min-h-screen flex flex-col items-center justify-center text-center relative">
 
@@ -41,12 +59,16 @@ function App() {
                 <div className="select-none flex space-x-3 md:space-x-6 lg:space-x-8 md:text-2xl mb-8">
                     <button
                         className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
-                        onClick={() => {handleScrollTo('about')}}>
+                        onClick={() => {
+                            handleScrollTo('about')
+                        }}>
                         About
                     </button>
                     <button
                         className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
-                        onClick={() => {handleScrollTo('instructions')}}>
+                        onClick={() => {
+                            handleScrollTo('instructions')
+                        }}>
                         How to Use
                     </button>
                     <button
@@ -55,26 +77,56 @@ function App() {
                     </button>
                     <button
                         className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
-                        onClick={() => {handleScrollTo('credits')}}>
+                        onClick={() => {
+                            handleScrollTo('credits')
+                        }}>
                         Credits
                     </button>
                 </div>
 
             </div>
 
+            {/** Secondary Header **/}
+            {showStickyHeader && (
+                <div className="sticky top-0 bg-wku-red text-white flex justify-between items-center p-4 shadow-lg z-50">
+                    <h1 className="font-playfair text-wkuYellow text-2xl">DAVE</h1>
+                    <div className="flex space-x-3 md:space-x-6 lg:space-x-8">
+                        <button
+                            className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                            onClick={() => { handleScrollTo('about') }}>
+                            About
+                        </button>
+                        <button
+                            className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                            onClick={() => { handleScrollTo('instructions') }}>
+                            How to Use
+                        </button>
+                        <button
+                            className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]">
+                            Algorithms
+                        </button>
+                        <button
+                            className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                            onClick={() => { handleScrollTo('credits') }}>
+                            Credits
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/** About Section **/}
             <div id="about" className="min-h-screen text-white flex items-center justify-center">
-                <h2 className="text-4xl">About Section</h2>
+                <h2 className="text-4xl">About DAVE</h2>
             </div>
 
             {/** How To Use Section **/}
             <div id="instructions" className="min-h-screen text-white flex items-center justify-center">
-                <h2 className="text-4xl">About Section</h2>
+                <h2 className="text-4xl">How to Use DAVE?</h2>
             </div>
 
             {/** Credits Section **/}
             <div id="credits" className="min-h-screen text-white flex items-center justify-center">
-                <h2 className="text-4xl">About Section</h2>
+                <h2 className="text-4xl">Credits</h2>
             </div>
         </div>
     );

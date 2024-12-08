@@ -5,6 +5,16 @@ import './App.css';
 // Main Page -- What is displayed across all pages
 function App() {
 
+    const handleScrollTo = (id: string) => {
+        const aboutSection = document.getElementById(id);
+        if (aboutSection) {
+            aboutSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        }
+    };
+
     return (
         <div className="bg-wku-red text-center relative">
 
@@ -30,11 +40,13 @@ function App() {
                 {/** Buttons **/}
                 <div className="select-none flex space-x-3 md:space-x-6 lg:space-x-8 md:text-2xl mb-8">
                     <button
-                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]">
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => {handleScrollTo('about')}}>
                         About
                     </button>
                     <button
-                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]">
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => {handleScrollTo('instructions')}}>
                         How to Use
                     </button>
                     <button
@@ -42,7 +54,8 @@ function App() {
                         Algorithms
                     </button>
                     <button
-                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]">
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => {handleScrollTo('credits')}}>
                         Credits
                     </button>
                 </div>

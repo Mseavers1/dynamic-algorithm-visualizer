@@ -39,7 +39,7 @@ function App() {
             <div
                 className="absolute inset-0 bg-grainy-noise bg-grainy-size bg-grainy-position opacity-20 pointer-events-none"></div>
 
-            <div className="min-h-screen flex flex-col items-center justify-center text-center relative">
+            <div className="min-h-screen flex flex-col items-center justify-center text-center relative" id="top">
 
                 {/** Radial Noise Overlay **/}
                 <div className="absolute inset-0 bg-radial-noise opacity-20 pointer-events-none"></div>
@@ -87,32 +87,50 @@ function App() {
             </div>
 
             {/** Secondary Header **/}
-            {showStickyHeader && (
-                <div className="sticky top-0 bg-wku-red text-white flex justify-between items-center p-4 shadow-lg z-50">
-                    <h1 className="font-playfair text-wkuYellow text-2xl">DAVE</h1>
-                    <div className="flex space-x-3 md:space-x-6 lg:space-x-8">
-                        <button
-                            className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
-                            onClick={() => { handleScrollTo('about') }}>
-                            About
-                        </button>
-                        <button
-                            className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
-                            onClick={() => { handleScrollTo('instructions') }}>
-                            How to Use
-                        </button>
-                        <button
-                            className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]">
-                            Algorithms
-                        </button>
-                        <button
-                            className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
-                            onClick={() => { handleScrollTo('credits') }}>
-                            Credits
-                        </button>
-                    </div>
+            <div
+                className={`fixed top-0 left-0 right-0 bg-wku-red text-white flex justify-between items-center p-4 shadow-lg z-50 transition-all duration-500 ease-in-out ${showStickyHeader ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+            >
+                <h1 className="font-playfair text-wkuYellow text-2xl font-bold drop-shadow-[5px_10px_12px_rgba(0,0,0,0.4)]">
+                    DAVE - <span className="select-none font-roboto text-sm sm:text-base md:text-lg lg:text-lg text-white font-medium mb-16 tracking-widest drop-shadow-[5px_10px_12px_rgba(0,0,0,0.2)]">
+                        A <span className="font-playfair font-semibold text-wkuYellow">D</span>ynamic <span
+                        className="font-playfair font-semibold text-wkuYellow">A</span>lgorithm <span
+                        className="font-playfair font-semibold text-wkuYellow">V</span>isualizer for <span
+                        className="font-playfair font-semibold text-wkuYellow">E</span>ducation
+                    </span>
+                </h1>
+                <div className="flex space-x-3 md:space-x-6 lg:space-x-8">
+                    <button
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => handleScrollTo('about')}
+                    >
+                        About
+                    </button>
+                    <button
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => handleScrollTo('instructions')}
+                    >
+                        How to Use
+                    </button>
+                    <button
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                    >
+                        Algorithms
+                    </button>
+                    <button
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => handleScrollTo('credits')}
+                    >
+                        Credits
+                    </button>
+                    <button
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => handleScrollTo('top')}
+                    >
+                        Top
+                    </button>
                 </div>
-            )}
+            </div>
+
 
             {/** About Section **/}
             <div id="about" className="min-h-screen text-white flex items-center justify-center">

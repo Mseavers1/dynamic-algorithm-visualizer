@@ -35,6 +35,7 @@ module.exports = {
       },
       colors: {
         "wku-red": "#b01e24",
+        "animator-bars": "#d4b39f",
         "wkuYellow": '#F1C40F'
       },
       letterSpacing: {

@@ -1,3 +1,4 @@
 export interface Algorithm {
-    display: () => JSX.Element;
+    render(): JSX.Element;
+    insert(value: string | number): void;
 }

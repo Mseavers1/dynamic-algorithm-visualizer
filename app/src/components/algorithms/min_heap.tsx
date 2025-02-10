@@ -11,17 +11,17 @@ export class MinHeap implements Algorithm {
     private current_max_height : number = 0;
 
     constructor(
-        private data: IData | undefined,
-        private setData: React.Dispatch<React.SetStateAction<IData>>,
         private isDynamicSize: boolean
     ) {
        this.current_max_height = this.default_max_height;
-       this.tree = this.data as BinaryTree;
+       this.tree = new BinaryTree();
     }
 
     insert(value: number) {
 
         this.tree?.add(value);
+
+        //alert(this.tree?.get_current_height())
 
         //if (this.isDynamicSize && current_height > this.current_max_height) this.current_max_height = current_height + 1;
 
@@ -33,7 +33,7 @@ export class MinHeap implements Algorithm {
 
         return (
             <svg width="500" height="500">
-                {/*<AnimatedTree values={this.data} height={this.current_max_height}/>*/}
+                <AnimatedTree values={this.tree.values} height={this.current_max_height}/>
             </svg>
         );
     }

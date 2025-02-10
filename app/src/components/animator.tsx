@@ -11,22 +11,19 @@ const Animator: React.FC = () => {
     const { algorithmType } = useParams<{ algorithmType: string }>();
     const [value, setValue] = React.useState<string | number>("");
 
-    const [data, setData] = React.useState<IData>();
     const [isDynamicSize, setIsDynamicSize] = useState<boolean>(true);
     const [algorithm, setAlgorithm] = useState<Algorithm | null>(null);
 
     useEffect(() => {
         const RetrieveAlgorithm = (algorithmName: string | undefined): Algorithm | null => {
             if (algorithmName === "min-heap") {
-                const newBinaryTree = new BinaryTree();  // Create a new BinaryTree
-                setData(newBinaryTree); // Set data state to the new BinaryTree instance
-                return new MinHeap(newBinaryTree, setData, true);  // Return the new MinHeap with the BinaryTree data
+                return new MinHeap(true);
             }
             return null;
         };
 
         const algo = RetrieveAlgorithm(algorithmType);
-        setAlgorithm(algo);  // Update the algorithm state with the new algorithm
+        setAlgorithm(algo);
     }, [algorithmType]);
 
     const header = () => {

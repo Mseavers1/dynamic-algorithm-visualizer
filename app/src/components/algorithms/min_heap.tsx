@@ -2,30 +2,44 @@ import { Algorithm } from "./algorithm_interface";
 import {BinaryTree} from "../structures/binary_tree";
 import React, {useState} from "react";
 import {animated, useTransition} from "@react-spring/web";
+import {IData} from "../structures/IData";
 
 export class MinHeap implements Algorithm {
 
+    private tree : BinaryTree;
+    private default_max_height : number = 1;
+    private current_max_height : number = 0;
 
     constructor(
-        private data: (string | number)[],
-        private setData: React.Dispatch<React.SetStateAction<(string | number)[]>>
-    ) {}
+        private isDynamicSize: boolean
+    ) {
+       this.current_max_height = this.default_max_height;
+       this.tree = new BinaryTree();
+    }
 
     insert(value: number) {
-        this.setData(prev => [...prev, value]); // React detects change
+
+        this.tree?.add(value);
+
+        //alert(this.tree?.get_current_height())
+
+        //if (this.isDynamicSize && current_height > this.current_max_height) this.current_max_height = current_height + 1;
+
     }
 
     render(): JSX.Element {
 
+        //alert(this.current_max_height);
+
         return (
             <svg width="500" height="500">
-                <AnimatedTree values={this.data}/>
+                <AnimatedTree values={this.tree.values} height={this.current_max_height}/>
             </svg>
         );
     }
 }
 
-const AnimatedTree = ({values}: {values : (string | number)[]}) => {
+const AnimatedTree = ({values, height}: {values : (string | number)[], height: number}) => {
 
     const nodeTransitions = useTransition(
         values.map((value, i) => ({ value, index: i })),
@@ -39,7 +53,7 @@ const AnimatedTree = ({values}: {values : (string | number)[]}) => {
         }
     );
 
-
+    //alert(height)
 
     const getNodePosition = (index: number): { x: number, y:number } => {
 
@@ -47,7 +61,12 @@ const AnimatedTree = ({values}: {values : (string | number)[]}) => {
         if (index === 0) return { x: 250, y: 50 }; // Root at the center
 
         const depth = Math.floor(Math.log2(index + 1)); // Get depth in the tree
-        const xSpacing = 200 / (depth + 1); // Reduce spacing as depth increases
+
+        let xSpacingMulti : number = 1;
+
+        if (height > 1) xSpacingMulti = 2;
+
+        const xSpacing = (200 * xSpacingMulti) / (depth + 1); // Reduce spacing as depth increases
         const ySpacing = 80; // Vertical spacing
 
         const parentIndex = Math.floor((index - 1) / 2);

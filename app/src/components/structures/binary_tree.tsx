@@ -1,7 +1,8 @@
 import { ITree } from './ITree';
+import {IData} from "./IData";
 
 // Define the BinaryTree logic in a separate class (without React dependencies)
-export class BinaryTree implements ITree {
+export class BinaryTree implements ITree, IData {
     values: (string | number)[] = [];
     length: number = 0;
 
@@ -14,6 +15,10 @@ export class BinaryTree implements ITree {
         if (!Number.isInteger(nodeID)) throw new Error("NodeID must be an integer.");
         if (this.length <= 0 || nodeID <= 0) return -1;
         return Math.floor(nodeID / 2) - 1;
+    }
+
+    get_current_height(): number {
+        return this.length > 0 ? Math.floor(Math.log2(this.length)) : 0;
     }
 
     is_empty(): boolean {

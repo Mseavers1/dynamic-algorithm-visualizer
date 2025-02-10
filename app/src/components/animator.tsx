@@ -10,6 +10,7 @@ const Animator: React.FC = () => {
     const [value, setValue] = React.useState<string | number>("");
 
     const [data, setData] = React.useState<(number | string)[]>([]);
+    const [isDynamicSize, setIsDynamicSize] = useState<boolean>(true);
 
     const header = () => {
         return (
@@ -47,7 +48,7 @@ const Animator: React.FC = () => {
 
     const RetrieveAlgorithm = (algorithmName: string | undefined): Algorithm | null => {
         if (algorithmName === "min-heap") {
-            return new MinHeap(data, setData);
+            return new MinHeap(data, setData, true);
         }
 
         return null;

@@ -2,37 +2,38 @@ import { Algorithm } from "./algorithm_interface";
 import {BinaryTree} from "../structures/binary_tree";
 import React, {useState} from "react";
 import {animated, useTransition} from "@react-spring/web";
+import {IData} from "../structures/IData";
 
 export class MinHeap implements Algorithm {
 
+    private tree : BinaryTree;
     private default_max_height : number = 1;
     private current_max_height : number = 0;
 
     constructor(
-        private data: (string | number)[],
-        private setData: React.Dispatch<React.SetStateAction<(string | number)[]>>,
+        private data: IData | undefined,
+        private setData: React.Dispatch<React.SetStateAction<IData>>,
         private isDynamicSize: boolean
     ) {
        this.current_max_height = this.default_max_height;
+       this.tree = this.data as BinaryTree;
     }
 
     insert(value: number) {
-        this.setData(prev => [...prev, value]);
-        const length = this.data.length;
 
-        const current_height = length > 0 ? Math.floor(Math.log2(length + 1)) : 0;
+        this.tree?.add(value);
 
-        if (this.isDynamicSize && current_height > this.current_max_height) this.current_max_height = current_height + 1;
+        //if (this.isDynamicSize && current_height > this.current_max_height) this.current_max_height = current_height + 1;
 
     }
 
     render(): JSX.Element {
 
-        alert(this.current_max_height);
+        //alert(this.current_max_height);
 
         return (
             <svg width="500" height="500">
-                <AnimatedTree values={this.data} height={this.current_max_height}/>
+                {/*<AnimatedTree values={this.data} height={this.current_max_height}/>*/}
             </svg>
         );
     }

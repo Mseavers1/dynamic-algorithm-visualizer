@@ -14,7 +14,7 @@ export class BinaryTree implements ITree, IData {
     get_parent(nodeID: number): number {
         if (!Number.isInteger(nodeID)) throw new Error("NodeID must be an integer.");
         if (this.length <= 0 || nodeID <= 0) return -1;
-        return Math.floor(nodeID / 2) - 1;
+        return Math.floor(nodeID / 2);
     }
 
     get_current_height(): number {
@@ -30,19 +30,35 @@ export class BinaryTree implements ITree, IData {
         this.length++;
     }
 
-    remove(): string | number {
+    remove(index : number | null = null): string | number {
         if (this.length <= 0) throw new Error("Cannot remove from an empty tree.");
+
+        if (index != null && index >= this.length) throw new Error("Index out of range.");
+
         this.length--;
-        return this.values.pop() as string | number;
+
+        if (index == null)
+            return this.values.pop() as string | number;
+
+        const val = this.values[index];
+        this.values.splice(index, 1);
+
+        return val;
+    }
+
+    swap(nodeA: number, nodeB: number): void {
+        const a = this.values[nodeA - 1];
+        this.values[nodeA - 1] = this.values[nodeB - 1];
+        this.values[nodeB - 1] = a;
     }
 
     size(): number {
         return this.length;
     }
 
-    get(nodeID: number): number | string | null {
+    get(nodeID: number): number | string {
         if (!Number.isInteger(nodeID)) throw new Error("NodeID must be an integer.");
-        if (nodeID > this.length || nodeID <= 0) return null;
+        if (nodeID > this.length || nodeID <= 0) throw new Error("NodeID (" + nodeID.toString() + ") not within range. ");
         return this.values[nodeID - 1];
     }
 }

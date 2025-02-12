@@ -15,7 +15,7 @@ function App() {
 
     const mainHeader = () => {
         return (
-            <div className="fixed top-0 left-0 right-0 bg-wku-red text-white flex items-center justify-between h-30 lg:h-10 xl:h-10 2xl:h-24 px-4">
+            <div className="fixed top-0 left-0 right-0 bg-wku-red text-white flex items-center justify-between h-30 lg:h-10 xl:h-10 2xl:h-30 px-4">
                 {/* Title */}
                 <h1 className="font-playfair text-wkuYellow text-2xl font-bold drop-shadow-[5px_10px_12px_rgba(0,0,0,0.4)]">
                     DAVE - <span

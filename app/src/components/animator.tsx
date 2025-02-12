@@ -7,8 +7,7 @@ import {MaxHeap} from "./algorithms/max_heap";
 import {IData} from "./structures/IData";
 import {BinaryTree} from "./structures/binary_tree";
 import {Instruction, NodeData} from "./algorithms/tree_intructions";
-import {TreeAnimator} from "./algorithms/animation_testing";
-import {TreeAnimate} from "./algorithms/tree_animator";
+import {TreeAnimate} from "./structures/tree_animator";
 
 const Animator: React.FC = () => {
     const { algorithmType } = useParams<{ algorithmType: string }>();

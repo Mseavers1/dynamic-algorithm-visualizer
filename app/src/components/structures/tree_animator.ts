@@ -1,4 +1,4 @@
-import {Instruction, NodeData} from "./tree_intructions";
+import {Instruction, NodeData} from "../algorithms/tree_intructions";
 import * as d3 from "d3";
 import {BaseType} from "d3";
 
@@ -52,50 +52,81 @@ export class TreeAnimate {
     };
 
     addNode = (svg: d3.Selection<BaseType, unknown, HTMLElement, any>, instruction: Instruction) => {
-
         return new Promise<void>((resolve) => {
-            const nodeElement = svg.append("circle")
-                .attr("cx", 200)  // Set starting x position
-                .attr("cy", 200)  // Set starting y position
+            const position = this.getNodePosition(instruction.index as number);
+            const parentIndex = Math.floor((instruction.index as number - 1) / 2);
+            const hasParent = parentIndex >= 0 && this.current_nodes[parentIndex];
+
+            // Ensure there are groups for edges and nodes
+            let edgesGroup = svg.select<SVGGElement>("g.edges");
+            let nodesGroup = svg.select<SVGGElement>("g.nodes");
+
+
+            if (edgesGroup.empty()) {
+                edgesGroup = svg.append("g").attr("class", "edges");
+            }
+            if (nodesGroup.empty()) {
+                nodesGroup = svg.append("g").attr("class", "nodes");
+            }
+
+            let edge: d3.Selection<SVGLineElement, unknown, HTMLElement, any> | null = null;
+            if (hasParent) {
+                const parentPos = this.getNodePosition(parentIndex as number);
+                edge = edgesGroup.append("line") // Append edge inside the 'edges' group
+                    .attr("x1", parentPos.x)
+                    .attr("y1", parentPos.y)
+                    .attr("x2", 200)  // Temporary start position
+                    .attr("y2", 200)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 5)
+                    .style("opacity", 0);
+            }
+
+            const nodeElement = nodesGroup.append("circle") // Append node inside the 'nodes' group
+                .attr("cx", 200)
+                .attr("cy", 200)
                 .attr("r", 20)
                 .attr("class", "node")
-                .style("opacity", 0);  // Start with invisible node
+                .style("opacity", 0);
 
-            const label = svg.append("text")
-                .attr("x", 200)  // Same x position as the circle
-                .attr("y", 200)  // Same y position as the circle
+            const label = nodesGroup.append("text") // Append label inside the 'nodes' group
+                .attr("x", 200)
+                .attr("y", 200)
                 .attr("class", "label")
-                .attr("text-anchor", "middle")  // Center the text horizontally
-                .attr("alignment-baseline", "middle")  // Center the text vertically
-                .style("fill", "white")  // Set text color
+                .attr("text-anchor", "middle")
+                .attr("alignment-baseline", "middle")
+                .style("fill", "white")
                 .style("font-size", "12px")
                 .text(instruction.value as number | string);
 
-            const newNode: NodeData = {
-                node: nodeElement,
-                label: label,
-                index: instruction.index as number,
-            };
-
+            const newNode: NodeData = { node: nodeElement, label, index: instruction.index as number };
             this.current_nodes.push(newNode);
 
             // Animate the node: fade in and move
             nodeElement.transition()
-                .duration(1000)  // Duration of 1 second
-                .style("opacity", 1)  // Fade in the node
-                .attr("cx", this.getNodePosition(instruction.index as number).x)
-                .attr("cy", this.getNodePosition(instruction.index as number).y);  // Keep y position constant for simplicity
+                .duration(1000)
+                .style("opacity", 1)
+                .attr("cx", position.x)
+                .attr("cy", position.y);
 
             label.transition()
-                .duration(1000)  // Duration of 1 second (same as node)
+                .duration(1000)
                 .style("opacity", 1)
-                .attr("x", this.getNodePosition(instruction.index as number).x)
-                .attr("y", this.getNodePosition(instruction.index as number).y);
+                .attr("x", position.x)
+                .attr("y", position.y);
 
-            // Resolve the promise after the animation duration
-            setTimeout(() => resolve(), 1000);  // Wait for the animation to finish (1000ms)
+            if (edge) {
+                edge.transition()
+                    .duration(1000)
+                    .style("opacity", 1)
+                    .attr("x2", position.x)
+                    .attr("y2", position.y);
+            }
+
+            setTimeout(() => resolve(), 1000);
         });
     };
+
 
     getNodePosition = (index: number): { x: number, y: number } => {
         if (index < 0 || isNaN(index)) return { x: 0, y: 0 };

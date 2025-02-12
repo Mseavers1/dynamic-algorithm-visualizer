@@ -3,7 +3,7 @@ import {BinaryTree} from "../structures/binary_tree";
 
 import {Instruction} from "./tree_intructions";
 import React from "react";
-import {TreeAnimate} from "./tree_animator";
+import {TreeAnimate} from "../structures/tree_animator";
 
 export class MinHeap implements Algorithm {
 

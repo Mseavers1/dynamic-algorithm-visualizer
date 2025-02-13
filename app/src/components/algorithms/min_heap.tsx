@@ -19,6 +19,64 @@ export class MinHeap implements Algorithm {
         this.animator = animator;
     }
 
+    getRandomString(length: number): string {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
+        for (let i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+
+    generate_random(size: number, allowStrings: boolean = false, allowNumbers: boolean = false) {
+
+        // Check if both are false
+        if (!allowNumbers && !allowStrings) allowNumbers = true
+
+        // Limit the size
+
+        let numElement : number | null = null;
+        let stringElement : string = "";
+
+        // Randomize
+        for (let i = 0; i < size; i++) {
+
+            if (allowNumbers) {
+                numElement = Math.random() * 1000;
+
+                // Round float to digit of X place
+
+                // Is number negative?
+
+            }
+
+            if (allowStrings) {
+                stringElement = this.getRandomString(5);
+            }
+
+            // If both are allowed, add only one
+            if (allowNumbers && allowStrings) {
+
+                let rand = Math.random();
+
+                // Add string
+                if (rand >= 0.5) {
+
+
+                    
+                }
+                // Add number
+                else {
+
+                }
+
+            }
+
+
+        }
+
+    }
+
     insert(value: string | number) : void {
 
         this.tree?.add(value);

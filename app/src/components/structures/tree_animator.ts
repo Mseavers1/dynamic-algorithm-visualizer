@@ -7,7 +7,7 @@ export class TreeAnimate {
     private instructions : Instruction[];
     private current_nodes : NodeData[];
 
-    constructor() {
+    constructor(private setIsAnimating: (value: boolean) => void) {
         this.instructions = [];
         this.current_nodes = [];
     }
@@ -17,6 +17,9 @@ export class TreeAnimate {
     }
 
     start_processing() {
+
+        this.setIsAnimating(true);
+
         const svg = d3.select("#svg-container")
             .attr("width", 500)
             .attr("height", 500);
@@ -54,6 +57,7 @@ export class TreeAnimate {
         }
 
         this.instructions = [];
+        this.setIsAnimating(false);
 
     };
 

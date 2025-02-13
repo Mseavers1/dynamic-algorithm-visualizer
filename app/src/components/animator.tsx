@@ -6,7 +6,6 @@ import { MinHeap } from "./algorithms/min_heap";
 import {MaxHeap} from "./algorithms/max_heap";
 import {IData} from "./structures/IData";
 import {BinaryTree} from "./structures/binary_tree";
-import {Instruction, NodeData} from "./algorithms/tree_intructions";
 import {TreeAnimate} from "./structures/tree_animator";
 
 const Animator: React.FC = () => {
@@ -16,13 +15,12 @@ const Animator: React.FC = () => {
     const [isDynamicSize, setIsDynamicSize] = useState<boolean>(true);
     const [algorithm, setAlgorithm] = useState<Algorithm | null>(null);
     const [treeAnimator, setTreeAnimator] = useState<TreeAnimate | null>(null);
+    const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
-    const [instructions, setInstructions] = useState<Instruction[]>([]);
-    const [nodes, setNodes] = useState<NodeData[]>([]);
 
     useEffect(() => {
 
-        const x = new TreeAnimate();
+        const x = new TreeAnimate(setIsAnimating);
 
         const RetrieveAlgorithm = (algorithmName: string | undefined): Algorithm | null => {
             if (algorithmName === "min-heap") {
@@ -41,20 +39,24 @@ const Animator: React.FC = () => {
             <div className="fixed top-20 xl:top-10 left-0 right-0 bg-animator-bars text-white flex items-center h-20 lg:h-10 xl:h-10 2xl:h-[3.5rem] p-4 gap-5">
                 <input
                     type="text"
-                    className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
                     placeholder="Enter value here"
                     value={value}
+                    disabled={isAnimating}
                     onChange={(e) => setValue(e.target.value)}
                 />
-                <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-                        onClick={() => {algorithm?.insert(value); setValue("");}}>
+                <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onClick={() => {algorithm?.insert(value); setValue("");}}
+                        disabled={isAnimating}>
                     Insert
                 </button>
-                <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-                        onClick={() => {algorithm?.delete(value); setValue("");}}>
+                <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onClick={() => {algorithm?.delete(value); setValue("");}}
+                        disabled={isAnimating}>
                     Delete
                 </button>
-                <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        disabled={isAnimating}>
                     Search
                 </button>
             </div>

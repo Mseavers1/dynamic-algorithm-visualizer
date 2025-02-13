@@ -44,6 +44,33 @@ export class MinHeap implements Algorithm {
 
     delete(value: string | number) : void {
 
+        const i = this.tree.search(value);
+
+        if (i < 0) return;
+
+        // First Swap current and Last index
+        this.tree.swap(i + 1, this.tree.length);
+
+        let newInstruction: Instruction = {
+            type: 'swap',
+            fromIndex: this.tree.length - 1,
+            toIndex: i,
+        };
+
+        this.animator.add_instruction(newInstruction)
+
+        this.tree?.remove(this.tree.length - 1);
+
+        newInstruction = {
+            type: 'remove',
+            index: this.tree.length,
+        };
+
+        this.animator.add_instruction(newInstruction);
+
+        this.heapifyDown(i);
+
+        this.animator.start_processing();
     }
 
     heapify(cur_index : number): void {
@@ -72,6 +99,29 @@ export class MinHeap implements Algorithm {
 
         // Heapify on the new cur index
         this.heapify(par_index);
+    }
+
+    heapifyDown(cur_index : number) : void {
+
+        const left: number = 2 * cur_index + 1;
+        const right: number = 2 * cur_index + 2;
+        const vals = this.tree.values;
+
+        const smallest = vals[left] > vals[right] ? right : left;
+
+        if (vals[smallest] < vals[cur_index]) {
+            this.tree.swap(cur_index, smallest);
+
+            const newInstruction: Instruction = {
+                type: 'swap',
+                fromIndex: cur_index,
+                toIndex: smallest,
+            };
+
+            this.animator.add_instruction(newInstruction);
+
+            this.heapifyDown(smallest);
+        }
     }
 }
 

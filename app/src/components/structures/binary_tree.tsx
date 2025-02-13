@@ -30,6 +30,19 @@ export class BinaryTree implements ITree, IData {
         this.length++;
     }
 
+    search(value: string | number): number {
+
+        for (let i = 0; i < this.length; i++) {
+
+            if (this.values[i] === value) return i;
+
+            // If the current value is smaller than what we are looking for, the value must not be in heap
+            if (this.values[i] > value) return -1;
+        }
+
+        return -1;
+    }
+
     remove(index : number | null = null): string | number {
         if (this.length <= 0) throw new Error("Cannot remove from an empty tree.");
 

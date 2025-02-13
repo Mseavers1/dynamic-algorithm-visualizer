@@ -47,11 +47,11 @@ const Animator: React.FC = () => {
                     onChange={(e) => setValue(e.target.value)}
                 />
                 <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-                        onClick={() => {algorithm?.insert(value); setValue("")}}>
+                        onClick={() => {algorithm?.insert(value); setValue("");}}>
                     Insert
                 </button>
                 <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-                        onClick={() => {algorithm?.delete(value); setValue(""); setInstructions([])}}>
+                        onClick={() => {algorithm?.delete(value); setValue("");}}>
                     Delete
                 </button>
                 <button className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">

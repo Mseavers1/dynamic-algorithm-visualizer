@@ -13,8 +13,6 @@ export class TreeAnimate {
     }
 
     add_instruction(instruction : Instruction) {
-
-        // Adds it
         this.instructions.push(instruction);
     }
 
@@ -44,12 +42,53 @@ export class TreeAnimate {
                 const node = this.current_nodes[instruction.toIndex as number]
                 this.current_nodes[instruction.toIndex as number] = this.current_nodes[instruction.fromIndex as number];
                 this.current_nodes[instruction.fromIndex as number] = node;
+
+                const edge = this.current_nodes[instruction.toIndex as number].parentEdge;
+                this.current_nodes[instruction.toIndex as number].parentEdge = this.current_nodes[instruction.fromIndex as number].parentEdge;
+                this.current_nodes[instruction.fromIndex as number].parentEdge = edge;
+            }
+
+            if (instruction.type === 'remove') {
+                await this.removeNode(svg, instruction);
             }
         }
 
         this.instructions = [];
 
     };
+
+    removeNode = (svg: d3.Selection<BaseType, unknown, HTMLElement, any>, instruction : Instruction) => {
+        return new Promise<void>((resolve) => {
+
+            for (let i = 0; i < this.current_nodes.length; i++) {
+
+                if (this.current_nodes[i].index === instruction.index) {
+
+                    this.current_nodes[i].node.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .remove();
+
+                    this.current_nodes[i].label.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .remove();
+
+                    if (this.current_nodes[i].parentEdge !== null) {
+                        this.current_nodes[i].parentEdge?.transition()
+                            .duration(500)
+                            .style("opacity", 0)
+                            .remove();
+                    }
+
+                    this.current_nodes.splice(i, 1);
+                    break;
+                }
+            }
+
+            setTimeout(() => resolve(), 1000);
+        });
+    }
 
     addNode = (svg: d3.Selection<BaseType, unknown, HTMLElement, any>, instruction: Instruction) => {
         return new Promise<void>((resolve) => {
@@ -99,7 +138,7 @@ export class TreeAnimate {
                 .style("font-size", "12px")
                 .text(instruction.value as number | string);
 
-            const newNode: NodeData = { node: nodeElement, label, index: instruction.index as number };
+            const newNode: NodeData = { node: nodeElement, label: label, parentEdge: edge, index: instruction.index as number };
             this.current_nodes.push(newNode);
 
             // Animate the node: fade in and move

@@ -1,7 +1,6 @@
-import { ITree } from './ITree';
+import {ITree} from "./ITree";
 import {IData} from "./IData";
 
-// Define the BinaryTree logic in a separate class (without React dependencies)
 export class BinaryTree implements ITree, IData {
     values: (string | number)[] = [];
     length: number = 0;
@@ -14,7 +13,7 @@ export class BinaryTree implements ITree, IData {
     get_parent(nodeID: number): number {
         if (!Number.isInteger(nodeID)) throw new Error("NodeID must be an integer.");
         if (this.length <= 0 || nodeID <= 0) return -1;
-        return Math.floor(nodeID / 2);
+        return Math.floor((nodeID - 1) / 2); // Adjust for 0-based index
     }
 
     get_current_height(): number {
@@ -31,38 +30,27 @@ export class BinaryTree implements ITree, IData {
     }
 
     search(value: string | number): number {
-
         for (let i = 0; i < this.length; i++) {
-
             if (this.values[i] === value) return i;
-
-            // If the current value is smaller than what we are looking for, the value must not be in heap
             if (this.values[i] > value) return -1;
         }
-
         return -1;
     }
 
-    remove(index : number | null = null): string | number {
+    remove(index: number | null = null): string | number {
         if (this.length <= 0) throw new Error("Cannot remove from an empty tree.");
-
         if (index != null && index >= this.length) throw new Error("Index out of range.");
-
         this.length--;
-
-        if (index == null)
-            return this.values.pop() as string | number;
-
+        if (index == null) return this.values.pop() as string | number;
         const val = this.values[index];
         this.values.splice(index, 1);
-
         return val;
     }
 
     swap(nodeA: number, nodeB: number): void {
-        const a = this.values[nodeA - 1];
-        this.values[nodeA - 1] = this.values[nodeB - 1];
-        this.values[nodeB - 1] = a;
+        const a = this.values[nodeA];
+        this.values[nodeA] = this.values[nodeB];
+        this.values[nodeB] = a;
     }
 
     size(): number {
@@ -71,7 +59,7 @@ export class BinaryTree implements ITree, IData {
 
     get(nodeID: number): number | string {
         if (!Number.isInteger(nodeID)) throw new Error("NodeID must be an integer.");
-        if (nodeID > this.length || nodeID <= 0) throw new Error("NodeID (" + nodeID.toString() + ") not within range. ");
-        return this.values[nodeID - 1];
+        if (nodeID >= this.length || nodeID < 0) throw new Error("NodeID (" + nodeID.toString() + ") not within range.");
+        return this.values[nodeID];
     }
 }

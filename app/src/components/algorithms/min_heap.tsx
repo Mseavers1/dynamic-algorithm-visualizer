@@ -8,8 +8,10 @@ import {TreeAnimate} from "../structures/tree_animator";
 export class MinHeap implements Algorithm {
 
     private tree : BinaryTree;
-
     private animator: TreeAnimate;
+    private maxSize:number = 5;
+
+
 
     constructor(
         private isDynamicSize: boolean,
@@ -28,26 +30,34 @@ export class MinHeap implements Algorithm {
         return result;
     }
 
-    generate_random(size: number, allowStrings: boolean = false, allowNumbers: boolean = false) {
+    generate_random(min:number, max:number, size: number, allowStrings: boolean = false, allowNumbers: boolean = false, allowDecimal: boolean = true, maxDecimal: number = 3): void {
+
+        // Clear heap
+        this.clear();
 
         // Check if both are false
         if (!allowNumbers && !allowStrings) allowNumbers = true
 
-        // Limit the size
-
         let numElement : number | null = null;
         let stringElement : string = "";
+
+        let newInstruction: Instruction = {
+            type: 'instant_add',
+            value: 0,
+            index: 0
+        };
 
         // Randomize
         for (let i = 0; i < size; i++) {
 
             if (allowNumbers) {
-                numElement = Math.random() * 1000;
 
-                // Round float to digit of X place
-
-                // Is number negative?
-
+                if (allowDecimal) {
+                    let additional = Math.pow(10, -maxDecimal);
+                    numElement = parseFloat((Math.random() * (max - min + additional) + min).toFixed(maxDecimal));
+                } else {
+                    numElement = Math.floor(Math.random() * (max - min) + min);
+                }
             }
 
             if (allowStrings) {
@@ -59,26 +69,73 @@ export class MinHeap implements Algorithm {
 
                 let rand = Math.random();
 
-                // Add string
-                if (rand >= 0.5) {
-
-
-                    
-                }
                 // Add number
-                else {
+                if (rand >= 0.5) {
+                    this.tree.add(numElement as number);
 
+                    newInstruction = {
+                        type: 'instant_add',
+                        value: numElement as number,
+                        index: this.tree.length - 1
+                    };
+
+                    this.animator.add_instruction(newInstruction);
                 }
+                // Add string
+                else {
+                    this.tree.add(stringElement);
 
+                    newInstruction = {
+                        type: 'instant_add',
+                        value: stringElement,
+                        index: this.tree.length - 1
+                    };
+
+                    this.animator.add_instruction(newInstruction);
+                }
             }
+            else if (allowNumbers) {
+                this.tree.add(numElement as number);
 
+                newInstruction = {
+                    type: 'instant_add',
+                    value: numElement as number,
+                    index: this.tree.length - 1
+                };
 
+                this.animator.add_instruction(newInstruction);
+            }
+            else {
+                this.tree.add(stringElement);
+
+                newInstruction = {
+                    type: 'instant_add',
+                    value: stringElement,
+                    index: this.tree.length - 1
+                };
+
+                this.animator.add_instruction(newInstruction);
+            }
         }
 
+        // Heapify Up
+        this.heapifyUp();
+
+        this.animator.start_processing()
     }
 
-    insert(value: string | number) : void {
+    clear() : void {
+        this.tree.clear();
 
+        const newInstruction: Instruction = {
+            type: 'clear',
+        };
+
+        this.animator.add_instruction(newInstruction);
+        this.animator.start_processing()
+    }
+
+    insert(value: string | number): void {
         this.tree?.add(value);
 
         const newInstruction: Instruction = {
@@ -86,46 +143,37 @@ export class MinHeap implements Algorithm {
             value: value,
             index: this.tree.length - 1,
         };
-
-        //this.setInstructions((prevInstructions) => [...prevInstructions, newInstruction]);
         this.animator.add_instruction(newInstruction);
 
-        this.heapify(this.tree.length);
+        // Use heapifyUp to maintain the heap property after insertion
+        this.heapifyUp();
 
-        this.animator.start_processing()
-
-        //alert(this.tree?.get_current_height())
-
-        //if (this.isDynamicSize && current_height > this.current_max_height) this.current_max_height = current_height + 1;
-
+        this.animator.start_processing();
     }
 
-    delete(value: string | number) : void {
-
+    delete(value: string | number): void {
         const i = this.tree.search(value);
 
         if (i < 0) return;
 
-        // First Swap current and Last index
-        this.tree.swap(i + 1, this.tree.length);
+        // Swap the last element with the element to be deleted
+        this.tree.swap(i, this.tree.length - 1);
 
-        let newInstruction: Instruction = {
+        const newInstruction: Instruction = {
             type: 'swap',
-            fromIndex: this.tree.length - 1,
-            toIndex: i,
+            fromIndex: i,
+            toIndex: this.tree.length - 1,
         };
-
-        this.animator.add_instruction(newInstruction)
-
-        this.tree?.remove(this.tree.length - 1);
-
-        newInstruction = {
-            type: 'remove',
-            index: this.tree.length,
-        };
-
         this.animator.add_instruction(newInstruction);
 
+        this.tree.remove(this.tree.length - 1);
+
+        this.animator.add_instruction({
+            type: 'remove',
+            index: i,
+        });
+
+        // Now restore the heap property after deletion (heapify down)
         this.heapifyDown(i);
 
         this.animator.start_processing();
@@ -159,27 +207,50 @@ export class MinHeap implements Algorithm {
         this.heapify(par_index);
     }
 
-    heapifyDown(cur_index : number) : void {
+    heapifyUp(): void {
+        let cur_index = this.tree.length - 1; // Start from the last node
+        const parentIndex = this.tree.get_parent(cur_index);
 
-        const left: number = 2 * cur_index + 1;
-        const right: number = 2 * cur_index + 2;
-        const vals = this.tree.values;
+        // Ensure the current index is greater than 0 (non-root node)
+        while (cur_index > 0 && this.tree.get(cur_index) < this.tree.get(parentIndex)) {
+            this.tree.swap(cur_index, parentIndex);
+            this.animator.add_instruction({
+                type: 'swap',
+                fromIndex: cur_index,
+                toIndex: parentIndex,
+            });
+            cur_index = parentIndex;
+        }
+    }
 
-        const smallest = vals[left] > vals[right] ? right : left;
+    heapifyDown(cur_index: number): void {
+        while (true) {
+            const left = 2 * cur_index + 1;
+            const right = 2 * cur_index + 2;
+            let smallest = cur_index;
+            
+            const vals = this.tree.values;
+            if (left < this.tree.length && vals[left] < vals[smallest]) {
+                smallest = left;
+            }
 
-        if (vals[smallest] < vals[cur_index]) {
+            if (right < this.tree.length && vals[right] < vals[smallest]) {
+                smallest = right;
+            }
+
+            if (smallest === cur_index) break;
+
+            // Swap current node with the smallest child
             this.tree.swap(cur_index, smallest);
-
-            const newInstruction: Instruction = {
+            this.animator.add_instruction({
                 type: 'swap',
                 fromIndex: cur_index,
                 toIndex: smallest,
-            };
+            });
 
-            this.animator.add_instruction(newInstruction);
-
-            this.heapifyDown(smallest);
+            cur_index = smallest;
         }
     }
+
 }
 

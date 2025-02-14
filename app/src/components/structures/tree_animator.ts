@@ -30,29 +30,24 @@ export class TreeAnimate {
     processInstructions = async (svg: d3.Selection<BaseType, unknown, HTMLElement, any>) => {
         for (let instruction of this.instructions) {
             if (instruction.type === 'add' && instruction.value) {
-                // Wait for the previous node to finish its animation before adding the next one
                 await this.addNode(svg, instruction);
             }
 
             if (instruction.type === 'swap') {
 
-                await this.swapNodes(svg, this.current_nodes[instruction.toIndex as number], this.current_nodes[instruction.fromIndex as number]);
-
-                const i = this.current_nodes[instruction.toIndex as number].index;
-                this.current_nodes[instruction.toIndex as number].index = this.current_nodes[instruction.fromIndex as number].index;
-                this.current_nodes[instruction.fromIndex as number].index = i;
-
-                const node = this.current_nodes[instruction.toIndex as number]
-                this.current_nodes[instruction.toIndex as number] = this.current_nodes[instruction.fromIndex as number];
-                this.current_nodes[instruction.fromIndex as number] = node;
-
-                const edge = this.current_nodes[instruction.toIndex as number].parentEdge;
-                this.current_nodes[instruction.toIndex as number].parentEdge = this.current_nodes[instruction.fromIndex as number].parentEdge;
-                this.current_nodes[instruction.fromIndex as number].parentEdge = edge;
+                await this.swapNodes(svg, this.current_nodes[instruction.toIndex as number], this.current_nodes[instruction.fromIndex as number], instruction);
             }
 
             if (instruction.type === 'remove') {
                 await this.removeNode(svg, instruction);
+            }
+
+            if (instruction.type === 'clear') {
+                await this.clearNodes(svg, instruction);
+            }
+
+            if (instruction.type === 'instant_add' && instruction.value) {
+                await this.addNode(svg, instruction, true);
             }
         }
 
@@ -67,25 +62,7 @@ export class TreeAnimate {
             for (let i = 0; i < this.current_nodes.length; i++) {
 
                 if (this.current_nodes[i].index === instruction.index) {
-
-                    this.current_nodes[i].node.transition()
-                        .duration(500)
-                        .style("opacity", 0)
-                        .remove();
-
-                    this.current_nodes[i].label.transition()
-                        .duration(500)
-                        .style("opacity", 0)
-                        .remove();
-
-                    if (this.current_nodes[i].parentEdge !== null) {
-                        this.current_nodes[i].parentEdge?.transition()
-                            .duration(500)
-                            .style("opacity", 0)
-                            .remove();
-                    }
-
-                    this.current_nodes.splice(i, 1);
+                    this.fade_nodes_out(i)
                     break;
                 }
             }
@@ -94,8 +71,44 @@ export class TreeAnimate {
         });
     }
 
-    addNode = (svg: d3.Selection<BaseType, unknown, HTMLElement, any>, instruction: Instruction) => {
+    clearNodes = (svg: d3.Selection<BaseType, unknown, HTMLElement, any>, instruction : Instruction) => {
         return new Promise<void>((resolve) => {
+
+            for (let i = this.current_nodes.length - 1; i >= 0; i--) {
+                this.fade_nodes_out(i)
+            }
+
+            setTimeout(() => resolve(), 1000);
+        });
+    }
+
+    fade_nodes_out(i : number) {
+        this.current_nodes[i].node.transition()
+            .duration(500)
+            .style("opacity", 0)
+            .remove();
+
+        this.current_nodes[i].label.transition()
+            .duration(500)
+            .style("opacity", 0)
+            .remove();
+
+        if (this.current_nodes[i].parentEdge !== null) {
+            this.current_nodes[i].parentEdge?.transition()
+                .duration(500)
+                .style("opacity", 0)
+                .remove();
+        }
+
+        this.current_nodes.splice(i, 1);
+    }
+
+    addNode = (svg: d3.Selection<BaseType, unknown, HTMLElement, any>, instruction: Instruction, allAtOnce: boolean = false) => {
+        return new Promise<void>((resolve) => {
+
+            let allAtOnceSpeed = 1;
+            if (allAtOnce) allAtOnceSpeed = 0;
+
             const position = this.getNodePosition(instruction.index as number);
             const parentIndex = Math.floor((instruction.index as number - 1) / 2);
             const hasParent = parentIndex >= 0 && this.current_nodes[parentIndex];
@@ -166,7 +179,7 @@ export class TreeAnimate {
                     .attr("y2", position.y);
             }
 
-            setTimeout(() => resolve(), 1000);
+            setTimeout(() => resolve(), 1000 * allAtOnceSpeed);
         });
     };
 
@@ -192,6 +205,7 @@ export class TreeAnimate {
         svg: d3.Selection<BaseType, unknown, HTMLElement, any>,
         nodeA: NodeData,
         nodeB: NodeData,
+        instruction: Instruction
     ) => {
 
         //alert(nodes.length);
@@ -229,6 +243,13 @@ export class TreeAnimate {
                 .duration(1000)
                 .attr("x", node1Position.x)
                 .attr("y", node1Position.y);
+
+            const temp = this.current_nodes[instruction.toIndex as number];
+
+            // Swap entire objects instead of just properties
+            this.current_nodes[instruction.toIndex as number] = this.current_nodes[instruction.fromIndex as number];
+            this.current_nodes[instruction.fromIndex as number] = temp;
+
 
             setTimeout(() => resolve(), 1000);
         });

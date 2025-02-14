@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 
 export type Instruction = {
-    type: 'add' | 'swap' | 'remove';
+    type: 'add' | 'swap' | 'remove' | 'clear' | 'instant_add';
     value?: string | number;
     index?: number;
     fromIndex?: number;

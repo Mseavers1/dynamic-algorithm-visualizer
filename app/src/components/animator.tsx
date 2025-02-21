@@ -21,8 +21,12 @@ const Animator: React.FC = () => {
 
     // Randomize Buttons
     const [sliderValue, setSliderValue] = useState(50);
+    const [stringLengthMin, setStringLengthMin] = useState("1");
+    const [stringLengthMax, setStringLengthMax] = useState("5");
     const [minValue, setMinValue] = useState("0");
     const [maxValue, setMaxValue] = useState("100");
+    const [allowDec, setAllowDec] = useState<boolean>(false);
+    const [regex, setRegex] = useState<string>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 
 
     useEffect(() => {
@@ -48,6 +52,10 @@ const Animator: React.FC = () => {
             setSliderValue(Number(e.target.value));
         };
 
+        function disableButton () : boolean {
+            return isNaN(Number(minValue)) || isNaN(Number(maxValue)) || minValue === "" || maxValue === "" || Number(minValue) > Number(maxValue) || isNaN(Number(stringLengthMin)) || isNaN(Number(stringLengthMax)) || stringLengthMin === "" || stringLengthMax === "" || stringLengthMin > stringLengthMax || Number(stringLengthMin) < 1 || Number(stringLengthMax) > 5 || regex === "" || String(regex).includes(" ");
+        }
+
         return (
             <Popover className="relative">
                 {({ open, close }) => (
@@ -72,7 +80,7 @@ const Animator: React.FC = () => {
                                 <div
                                     className="relative border-dotted border-2 border-gray-400 p-6 rounded-md flex items-center justify-center">
                                     <label
-                                        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700">
+                                        className="absolute select-none top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700">
                                         Type
                                     </label>
                                     <div className="flex flex-row justify-center gap-4">
@@ -87,7 +95,7 @@ const Animator: React.FC = () => {
                                                     className="accent-blue-500"
                                                 />
                                                 <span
-                                                    className="text-gray-700">{option.charAt(0).toUpperCase() + option.slice(1)} </span>
+                                                    className="text-gray-700 select-none">{option.charAt(0).toUpperCase() + option.slice(1)} </span>
                                             </label>
                                         ))}
                                     </div>
@@ -98,13 +106,13 @@ const Animator: React.FC = () => {
                                 <div
                                     className="relative border-dotted border-2 border-gray-400 rounded-md flex flex-col items-center justify-center p-6">
                                     <label
-                                        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700">
+                                        className="absolute select-none top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700">
                                         Number of Nodes
                                     </label>
                                     <div className="flex flex-col items-center justify-center w-full">
 
                                         {/* Current Value */}
-                                        <div className="text-lg font-semibold text-blue-500 mb-2">
+                                        <div className="text-lg font-semibold text-blue-500 mb-2 select-none">
                                             {sliderValue}
                                         </div>
 
@@ -120,7 +128,7 @@ const Animator: React.FC = () => {
                                         />
 
                                         {/* Bottom Labels */}
-                                        <div className="flex justify-between w-64 mt-2">
+                                        <div className="flex justify-between w-64 mt-2 select-none">
                                             {/* Left Label */}
                                             <span className="text-sm text-gray-700">0</span>
 
@@ -133,49 +141,105 @@ const Animator: React.FC = () => {
 
                                 {/* Min & Max Input */}
                                 <div
-                                    className="relative border-dotted border-2 border-gray-400 rounded-md flex flex-col items-center justify-center p-6">
+                                    className="relative border-dotted border-2 border-gray-400 rounded-md flex flex-col items-center justify-center p-6 gap-3">
                                     <label
-                                        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700">
+                                        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700 select-none">
                                         Numbers
                                     </label>
                                     <div className="flex flex-row justify-center text-black items-center gap-4">
                                         <input
                                             type="text"
-                                            className="py-2 w-10 border text-center border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
+                                            className="py-2 w-10 border text-center disabled:bg-gray-400 border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
                                             placeholder="Min"
                                             value={minValue}
-                                            //disabled={isAnimating}
+                                            disabled={mode === "strings"}
                                             onChange={(e) => setMinValue((e.target.value))}
                                         />
 
-                                        to
+                                        <span className="select-none">to</span>
 
                                         <input
                                             type="text"
-                                            className="py-2 w-10 border text-center border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
+                                            className="py-2 w-10 border disabled:bg-gray-400 text-center border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
                                             placeholder="Max"
                                             value={maxValue}
-                                            //disabled={isAnimating}
+                                            disabled={mode === "strings"}
                                             onChange={(e) => setMaxValue((e.target.value))}
                                         />
                                     </div>
+
+                                    <label className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            id="checkbox"
+                                            disabled={mode === "strings"}
+                                            className="h-4 w-4 text-blue-500 focus:ring-0 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                            onChange={(e) => setAllowDec(e.target.checked)}
+                                        />
+                                        <span className="text-gray-700 select-none">Allow Decimals</span>
+                                    </label>
+
                                 </div>
 
+                                {/* String Length */}
                                 <div
                                     className="relative border-dotted border-2 border-gray-400 rounded-md flex flex-col items-center justify-center p-6">
                                     <label
-                                        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700">
-                                        Strings
+                                        className="absolute select-none top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700">
+                                        String Length
                                     </label>
+
+                                    <div className="flex flex-row justify-center text-black items-center gap-4">
+                                        <input
+                                            type="text"
+                                            className="py-2 w-10 border text-center disabled:bg-gray-400 border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
+                                            placeholder="Min"
+                                            value={stringLengthMin}
+                                            disabled={mode === "numbers"}
+                                            onChange={(e) => setStringLengthMin((e.target.value))}
+                                        />
+
+                                        <span className="select-none">to</span>
+
+                                        <input
+                                            type="text"
+                                            className="py-2 w-10 border text-center disabled:bg-gray-400 border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
+                                            placeholder="Max"
+                                            value={stringLengthMax}
+                                            disabled={mode === "numbers"}
+                                            onChange={(e) => setStringLengthMax((e.target.value))}
+                                        />
+                                    </div>
+
+                                </div>
+
+                                {/* String Regex */}
+                                <div
+                                    className="relative border-dotted border-2 border-gray-400 rounded-md flex flex-col items-center justify-center p-6">
+                                    <label
+                                        className="absolute select-none top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm font-semibold text-gray-700">
+                                        String Regex
+                                    </label>
+
+                                    <div className="flex flex-row justify-center text-black items-center gap-4">
+                                        <textarea
+                                            className="py-2 w-64 h-24 disabled:bg-gray-400 border text-center border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
+                                            placeholder="Character set for strings"
+                                            value={regex}
+                                            disabled={mode === "numbers"}
+                                            onChange={(e) => setRegex((e.target.value))}
+                                        />
+                                    </div>
+
                                 </div>
 
 
                                 {/* Confirm Button */}
                                 <button
                                     className="w-full px-4 py-2 text-white bg-blue-500 font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                    disabled={isNaN(Number(minValue)) || isNaN(Number(maxValue)) || minValue === "" || maxValue === "" || minValue > maxValue}
+                                    disabled={disableButton()}
                                     onClick={() => {
-                                        algorithm?.generate_random(Number(minValue), Number(maxValue), sliderValue, (mode === "strings" || mode === "both"), (mode === "numbers" || mode === "both"), false, 3);
+                                        algorithm?.generate_random(Number(minValue), Number(maxValue) + 1, sliderValue, (mode === "strings" || mode === "both"), (mode === "numbers" || mode === "both"), allowDec, 3, regex, Number(stringLengthMin), Number(stringLengthMax));
                                         close();
                                     }}
                                 >
@@ -185,7 +249,7 @@ const Animator: React.FC = () => {
 
                         </PopoverPanel>
                     </>
-                    )}
+                )}
             </Popover>
         );
     };

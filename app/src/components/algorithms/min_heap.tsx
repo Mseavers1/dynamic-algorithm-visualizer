@@ -24,8 +24,10 @@ export class MinHeap implements Algorithm {
         this.animator = animator;
     }
 
-    getRandomString(length: number): string {
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    getRandomString(lengthMin: number, lengthMax: number, regex: string): string {
+        const chars = regex;
+        const length = Math.floor(Math.random() * (lengthMax - lengthMin + 1)) + lengthMin;
+
         let result = "";
         for (let i = 0; i < length; i++) {
             result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -33,7 +35,8 @@ export class MinHeap implements Algorithm {
         return result;
     }
 
-    generate_random(min:number, max:number, size: number, allowStrings: boolean = false, allowNumbers: boolean = false, allowDecimal: boolean = true, maxDecimal: number = 3): void {
+
+    generate_random(min:number, max:number, size: number, allowStrings: boolean = false, allowNumbers: boolean = false, allowDecimal: boolean = true, maxDecimal: number = 3, regex: string = "", stringLengthMin: number = 1, stringLengthMax: number = 5): void {
 
         // Clear heap
         this.empty_tree();
@@ -60,7 +63,7 @@ export class MinHeap implements Algorithm {
             }
 
             if (allowStrings) {
-                stringElement = this.getRandomString(5);
+                stringElement = this.getRandomString(stringLengthMin, stringLengthMax, regex);
             }
 
             // If both are allowed, add only one

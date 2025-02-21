@@ -19,6 +19,7 @@ export class TreeAnimate {
     start_processing() {
 
         this.setIsAnimating(true);
+        //alert(this.instructions)
 
         const svg = d3.select("#svg-container")
             .attr("width", 500)
@@ -43,7 +44,7 @@ export class TreeAnimate {
             }
 
             if (instruction.type === 'clear') {
-                await this.clearNodes(svg, instruction);
+                await this.clearNodes(svg, instruction).then(() => {this.current_nodes = [];});
             }
 
             if (instruction.type === 'instant_add' && instruction.value) {
@@ -201,6 +202,23 @@ export class TreeAnimate {
         return { x: parentPos.x + xOffset, y: parentPos.y + ySpacing };
     };
 
+    animate = (update: (progress: number) => void, duration: number = 1000) => {
+        return new Promise<void>((resolve) => {
+            const start = performance.now();
+            const step = (timestamp: number) => {
+                const progress = Math.min((timestamp - start) / duration, 1);
+                update(progress);
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    resolve();
+                }
+            };
+            requestAnimationFrame(step);
+        });
+    };
+
+
     swapNodes = (
         svg: d3.Selection<BaseType, unknown, HTMLElement, any>,
         nodeA: NodeData,
@@ -220,38 +238,23 @@ export class TreeAnimate {
             const node1Position = { x: parseFloat(node1.attr("cx")), y: parseFloat(node1.attr("cy")) };
             const node2Position = { x: parseFloat(node2.attr("cx")), y: parseFloat(node2.attr("cy")) };
 
-            // Animate node1 to node2's position
-            node1.transition()
-                .duration(1000)
-                .attr("cx", node2Position.x)
-                .attr("cy", node2Position.y);
+            this.animate((progress) => {
+                const newX1 = node1Position.x + (node2Position.x - node1Position.x) * progress;
+                const newY1 = node1Position.y + (node2Position.y - node1Position.y) * progress;
+                const newX2 = node2Position.x + (node1Position.x - node2Position.x) * progress;
+                const newY2 = node2Position.y + (node1Position.y - node2Position.y) * progress;
 
-            // Animate label1 to node2's position
-            label1.transition()
-                .duration(1000)
-                .attr("x", node2Position.x)
-                .attr("y", node2Position.y);
-
-            // Animate node2 to node1's position
-            node2.transition()
-                .duration(1000)
-                .attr("cx", node1Position.x)
-                .attr("cy", node1Position.y);
-
-            // Animate label2 to node1's position
-            label2.transition()
-                .duration(1000)
-                .attr("x", node1Position.x)
-                .attr("y", node1Position.y);
-
-            const temp = this.current_nodes[instruction.toIndex as number];
-
-            // Swap entire objects instead of just properties
-            this.current_nodes[instruction.toIndex as number] = this.current_nodes[instruction.fromIndex as number];
-            this.current_nodes[instruction.fromIndex as number] = temp;
-
-
-            setTimeout(() => resolve(), 1000);
+                node1.attr("cx", newX1).attr("cy", newY1);
+                label1.attr("x", newX1).attr("y", newY1);
+                node2.attr("cx", newX2).attr("cy", newY2);
+                label2.attr("x", newX2).attr("y", newY2);
+            }, 1000).then(() => {
+                // Swap the actual data reference
+                const temp = this.current_nodes[instruction.toIndex as number];
+                this.current_nodes[instruction.toIndex as number] = this.current_nodes[instruction.fromIndex as number];
+                this.current_nodes[instruction.fromIndex as number] = temp;
+                resolve();
+            });
         });
     };
 

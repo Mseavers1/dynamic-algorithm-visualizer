@@ -13,7 +13,7 @@ export class BinaryTree implements ITree, IData {
     get_parent(nodeID: number): number {
         if (!Number.isInteger(nodeID)) throw new Error("NodeID must be an integer.");
         if (this.length <= 0 || nodeID <= 0) return -1;
-        return Math.floor((nodeID - 1) / 2); // Adjust for 0-based index
+        return Math.floor((nodeID - 1) / 2);
     }
 
     get_current_height(): number {
@@ -30,12 +30,22 @@ export class BinaryTree implements ITree, IData {
     }
 
     search(value: string | number): number {
+        // Convert value to a number if it's a string that can be converted
+        const parsedValue = typeof value === 'string' ? parseFloat(value) : value;
+
         for (let i = 0; i < this.length; i++) {
-            if (this.values[i] === value) return i;
-            if (this.values[i] > value) return -1;
+            const currentValue = this.values[i];
+
+            // If current value is a string that can be converted to a number, convert it
+            const parsedCurrentValue = typeof currentValue === 'string' ? parseFloat(currentValue) : currentValue;
+
+            // Compare the parsed values
+            if (parsedCurrentValue === parsedValue) return i;
+            if (parsedCurrentValue > parsedValue) return -1;
         }
         return -1;
     }
+
 
     remove(index: number | null = null): string | number {
         if (this.length <= 0) throw new Error("Cannot remove from an empty tree.");

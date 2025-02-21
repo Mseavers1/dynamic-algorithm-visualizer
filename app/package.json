@@ -8,6 +8,7 @@
     "@fontsource/pacifico": "^5.1.0",
     "@fontsource/playfair-display": "^5.1.0",
     "@fontsource/roboto": "^5.1.0",
+    "@headlessui/react": "^2.2.0",
     "@react-spring/konva": "^9.7.5",
     "@react-spring/web": "^9.7.5",
     "@svgr/webpack": "^8.1.0",

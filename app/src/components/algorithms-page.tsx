@@ -120,6 +120,14 @@ const AlgorithmsPage: React.FC = () => {
                     </ul>
                 )}
             />
+            <Card
+                title="Misc Algorithms"
+                content={(
+                    <ul>
+                        <ListItem text="FA Generator (transition table)" onClick={() => nav("/algorithms/animate/fa-transition")} />
+                    </ul>
+                )}
+            />
         </div>
 
     );

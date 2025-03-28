@@ -3,6 +3,7 @@ import { Algorithm } from "./algorithms/algorithm_interface";
 import { useParams } from "react-router-dom";
 import { Pause } from "lucide-react";
 import { MinHeap } from "./algorithms/min_heap";
+import {FATransition} from "./algorithms/fa_transition";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import {TreeAnimate} from "./structures/tree_animator";
 import {AnimationPlayer} from "./animation_player";
@@ -18,6 +19,7 @@ const Animator: React.FC = () => {
     const [animationPlayer, setAnimationPlayer] = useState<AnimationPlayer>();
     const [isAnimating, setIsAnimating] = useState<boolean>(false);
     const [mode, setMode] = useState("numbers");
+    const [inputTableInput, setInputTableInput] = useState<string>("");
 
     // Randomize Buttons
     const [sliderValue, setSliderValue] = useState(50);
@@ -34,9 +36,15 @@ const Animator: React.FC = () => {
         const animatedPlayer = new AnimationPlayer(setIsAnimating);
 
         const RetrieveAlgorithm = (algorithmName: string | undefined): Algorithm | null => {
+
             if (algorithmName === "min-heap") {
                 return new MinHeap(true, animatedPlayer);
             }
+
+            if (algorithmName === "fa-transition") {
+                return new FATransition(animatedPlayer);
+            }
+
             return null;
         };
 
@@ -57,7 +65,7 @@ const Animator: React.FC = () => {
         }
 
         return (
-            <Popover className="relative">
+            <Popover className="relative z-50">
                 {({ open, close }) => (
                     <>
                         <PopoverButton
@@ -73,7 +81,7 @@ const Animator: React.FC = () => {
                             />
                         </PopoverButton>
 
-                        <PopoverPanel className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-70 bg-white border border-gray-300 shadow-lg rounded-lg p-2">
+                        <PopoverPanel className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-70 bg-white border border-gray-300 shadow-lg rounded-lg p-2 z-50">
 
                             <div className="flex flex-col gap-5">
                                 {/* Radio Buttons */}
@@ -254,11 +262,10 @@ const Animator: React.FC = () => {
         );
     };
 
-
     const header = () => {
         return (
             <div
-                className="fixed top-20 xl:top-10 left-0 right-0 bg-animator-bars text-white flex items-center h-20 lg:h-10 xl:h-10 2xl:h-[3.5rem] p-4 gap-5">
+                className="fixed top-20 xl:top-10 left-0 right-0 bg-animator-bars text-white flex items-center h-20 lg:h-10 xl:h-10 2xl:h-[3.5rem] p-4 gap-5 z-50">
                 <input
                     type="text"
                     className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
@@ -315,13 +322,70 @@ const Animator: React.FC = () => {
         return (
             <div
                 className="fixed bottom-6 left-0 right-0 bg-animator-bars text-white flex items-center justify-between p-4 h-30 lg:h-10 xl:h-10 2xl:h-[3.5rem]">
+
                 <button
                     className="flex items-center justify-center 2xl:w-10 2xl:h-10 xl:w-7 xl:h-7 bg-blue-500 text-white rounded-xl shadow-md active:scale-90 transition transform duration-150 ease-out hover:bg-blue-600 focus:outline-none">
-                    <Pause size={window.innerWidth < 1280 ? 24 : 20} />
+                    <Pause size={window.innerWidth < 1280 ? 24 : 20}/>
+                </button>
+
+                <button
+                    className="flex items-center justify-center bg-blue-500 p-2 text-white rounded-xl shadow-md active:scale-90 transition transform duration-150 ease-out hover:bg-blue-600 focus:outline-none"
+                    onClick={() => algorithm?.parse(inputTableInput)}>
+                    Generate FA
                 </button>
             </div>
         );
     };
+
+    const inputTable = () => {
+
+        const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+            const textarea = e.target as HTMLTextAreaElement; // Type the target as HTMLTextAreaElement
+            const cursorPosition = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+            const textAfterCursor = textarea.value.substring(cursorPosition);
+
+            if (e.key === 'Tab') {
+                const indentation = '  '.repeat(2);
+
+                // Set the new value of textarea with the correct indentation
+                setInputTableInput(textBeforeCursor + indentation + textAfterCursor);
+
+                e.preventDefault();
+            }
+
+            //if (e.key === 'Enter') {
+            //    algorithm?.parse(inputTableInput);
+            //}
+        };
+
+
+        return (
+            <div className="flex flex-col w-[500px]">
+                <textarea
+                    id="fa-input"
+                    className="w-full max-w-lg h-[1000px] p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 z-10 resize-none"
+                    value={inputTableInput}
+                    onChange={(e) => {setInputTableInput(e.target.value)}}
+                    placeholder={`# Here is an example of a transition table:
+  a:
+      start
+      a: 0, 1
+      b: 1
+  b:
+      final
+      a: 1
+      b: 0`}
+                    onKeyDown={handleKeyDown}
+                    spellCheck={false}
+                    data-gramm="false"
+                    data-gramm_editor="false"
+                    data-enable-grammarly="false"
+                />
+            </div>
+        )
+
+    }
 
     if (!algorithm) {
         return <div>Nothing</div>;
@@ -330,13 +394,17 @@ const Animator: React.FC = () => {
     return (
         <div className="flex bg-white items-center justify-center min-h-screen">
             {header()}
-            <div className="text-center">
+
+            <div className="flex flex-row text-center gap-20">
+
+                {inputTable()}
 
                 <svg id="svg-container" width="500" height="500">
 
                 </svg>
 
             </div>
+
             {footer()}
         </div>
     );

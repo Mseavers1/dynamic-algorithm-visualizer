@@ -212,6 +212,9 @@ export class MinHeap implements Algorithm {
         }
     }
 
+    parse(area: string): void {
+    }
+
     /*heapifyDownRecursive(cur_index: number): void {
 
         const left = 2 * cur_index + 1;

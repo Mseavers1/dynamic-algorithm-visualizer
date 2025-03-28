@@ -19,14 +19,18 @@ export class FAAddInstruction implements Instruction {
     indexStates: Record<string, number>;
     values: stateValues[];
     colors: Record<string, Color>;
+    isStarting: boolean;
+    isFinal: boolean;
 
-    constructor(index: number, value: number | string, numberOfStates: number, values: stateValues[], indexStates: Record<string, number>, color: Record<string, Color>) {
+    constructor(index: number, value: number | string, numberOfStates: number, values: stateValues[], indexStates: Record<string, number>, color: Record<string, Color>, isStarting: boolean, isFinal: boolean) {
         this.index = index;
         this.value = value;
         this.numberOfStates = numberOfStates;
         this.indexStates = indexStates;
         this.values = values;
         this.colors = color;
+        this.isStarting = isStarting;
+        this.isFinal = isFinal;
     }
 
     async process(svg: Selection<BaseType, unknown, HTMLElement, any>): Promise<void> {
@@ -46,6 +50,21 @@ export class FAAddInstruction implements Instruction {
             nodesGroup = svg.append("g").attr("class", "nodes");
         }
 
+        //let finalNodeElement: <SVGLineElement, unknown, HTMLElement, any> | null = null;
+
+        if (this.isFinal) {
+
+            const x = nodesGroup.append("circle")
+                .style("opacity", 1)
+                .attr("cx", position.x)
+                .attr("cy", position.y)
+                .attr("r", 25)
+                .attr("stroke", "black")
+                .attr("class", "node")
+                .attr("stroke-width", 2)
+                .attr("fill", "white");
+        }
+
         const nodeElement = nodesGroup.append("circle")
             .attr("cx", 200)
             .attr("cy", 200)
@@ -60,13 +79,14 @@ export class FAAddInstruction implements Instruction {
             .attr("class", "label")
             .attr("text-anchor", "middle")
             .attr("alignment-baseline", "middle")
-            .style("fill", "white")
-            .style("font-size", "12px")
+            .style("fill", "black")
+            .style("font-size", "20px")
             .text(this.value);
 
         const defs = svg.append("defs");
 
         let edges: d3.Selection<SVGLineElement, unknown, HTMLElement, any>[] = [];
+        let noTransitionEdges: d3.Selection<SVGLineElement, unknown, HTMLElement, any>[] = [];
         let edgesLabels: d3.Selection<SVGTextElement, unknown, HTMLElement, any>[] = [];
         let paths: d3.Selection<SVGPathElement, unknown, HTMLElement, any>[] = []
         let pathLabels: d3.Selection<SVGTextElement, unknown, HTMLElement, any>[] = []
@@ -110,6 +130,21 @@ export class FAAddInstruction implements Instruction {
                     .append("path")
                     .attr("d", "M0,0 L10,5 L0,10")
                     .attr("fill", `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`);
+            }
+
+            if (this.isStarting) {
+
+                const edge = edgesGroup.append("line")
+                    .attr("x1", position.x)
+                    .attr("y1", position.y - 50)
+                    .attr("x2", position.x)
+                    .attr("y2", position.y)
+                    .attr("stroke", "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")")
+                    .attr("stroke-width", 5)
+                    .style("opacity", 1)
+                    .attr("marker-end", `url(#${markerId})`);
+
+                noTransitionEdges.push(edge);
             }
 
             if (this.indexStates[val.state] != this.index) {
@@ -177,6 +212,9 @@ export class FAAddInstruction implements Instruction {
             .style("opacity", 1)
             .attr("cx", position.x)
             .attr("cy", position.y)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2)
+            .attr("fill", "white");
 
         const labelTransition = label.transition()
             .duration(1000)

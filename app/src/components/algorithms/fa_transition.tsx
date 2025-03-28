@@ -2,6 +2,7 @@ import {Algorithm} from "./algorithm_interface";
 import {AnimationPlayer} from "../animation_player";
 import {FAAddInstruction, Color} from "../Instructions/fa_add_instruction";
 import {TreeAddInstruction} from "../Instructions/tree_add_instruction";
+import * as d3 from "d3";
 
 export type stateValues = {
     state: string;
@@ -15,6 +16,12 @@ export class FATransition implements Algorithm {
     private startingState: string | null;
     private finalStates: string[];
     private colorUsed: Color[];
+
+    public showClear: boolean = true;
+    public showDelete: boolean = false;
+    public showInsert: boolean = false;
+    public showRandomize: boolean = false;
+    public showSearch: boolean = false;
 
     constructor(
         animator: AnimationPlayer,
@@ -106,7 +113,7 @@ export class FATransition implements Algorithm {
                     }
 
                     // Add onto the final states
-                    else if (new_line.toUpperCase() === "FINAL") {
+                    if (new_line.toUpperCase() === "FINAL") {
                         this.finalStates.push(currentState);
                     }
                 }
@@ -141,7 +148,10 @@ export class FATransition implements Algorithm {
                 //    this.animator.addInstruction(new FAAddInstruction(index, value, ))
                 //});
 
-                this.animator.addInstruction(new FAAddInstruction(index, state, Object.keys(this.states).length, this.states[state], indexStates, colorStates));
+                let isStarting = state === this.startingState;
+                let isFinal = this.finalStates.includes(state);
+
+                this.animator.addInstruction(new FAAddInstruction(index, state, Object.keys(this.states).length, this.states[state], indexStates, colorStates, isStarting, isFinal));
 
                 index += 1;
             }
@@ -152,6 +162,9 @@ export class FATransition implements Algorithm {
     }
 
     clear(): void {
+        const svg = d3.select("#svg-container").attr("width", 500).attr("height", 500);
+        svg.selectAll("*").remove();
+
     }
 
     delete(value: string | number): void {

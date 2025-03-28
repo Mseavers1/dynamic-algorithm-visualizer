@@ -70,7 +70,7 @@ const Animator: React.FC = () => {
                     <>
                         <PopoverButton
                             className="px-4 py-2 xl:px-2 xl:py-0.5 leading-none 2xl:px-4 2xl:py-1.5 bg-blue-500 flex flex-col items-center text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                            disabled={isAnimating}
+                            disabled={isAnimating || !algorithm?.showRandomize}
                         >
                             Randomize
                             <ChevronDown
@@ -271,7 +271,7 @@ const Animator: React.FC = () => {
                     className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
                     placeholder="Enter value here"
                     value={value}
-                    disabled={isAnimating}
+                    disabled={isAnimating || !algorithm?.showInsert}
                     onChange={(e) => setValue(e.target.value)}
                 />
 
@@ -281,7 +281,7 @@ const Animator: React.FC = () => {
                         algorithm?.insert(value);
                         setValue("");
                     }}
-                    disabled={isAnimating}>
+                    disabled={isAnimating || !algorithm?.showInsert}>
                     Insert
                 </button>
 
@@ -291,19 +291,19 @@ const Animator: React.FC = () => {
                         algorithm?.delete(value);
                         setValue("");
                     }}
-                    disabled={isAnimating}>
+                    disabled={isAnimating || !algorithm?.showDelete}>
                     Delete
                 </button>
 
                 <button
                     className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    disabled={isAnimating}>
+                    disabled={isAnimating || !algorithm?.showSearch}>
                     Search
                 </button>
 
                 <button
                     className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    disabled={isAnimating}
+                    disabled={isAnimating || !algorithm?.showClear}
                     onClick={() => {
                         algorithm?.clear()
                     }}>

@@ -20,9 +20,11 @@ export class FATransition implements Algorithm {
 
     public showClear: boolean = true;
     public showDelete: boolean = false;
-    public showInsert: boolean = false;
+    public showInsert: boolean = true;
     public showRandomize: boolean = false;
     public showSearch: boolean = false;
+    public showField: boolean = true;
+    public insert_name: string = "Validate";
 
     constructor(
         animator: AnimationPlayer,
@@ -83,7 +85,7 @@ export class FATransition implements Algorithm {
             if (line.startsWith('#') || line.startsWith('//')) continue;
 
             // If it doesn't start with a space, it is the start of a state definition
-            if (!line.startsWith(' ')) {
+            if (!line.startsWith(' ') && line.includes(':')) {
                 const value = line.split(":")[0];
 
                 if (this.graph.get_node(value) == null) this.graph.create_node(value);
@@ -184,7 +186,43 @@ export class FATransition implements Algorithm {
     generate_random(min: number, max: number, size: number, allowStrings: boolean, allowNumbers: boolean, allowDecimal: boolean, maxDecimal: number, regex: string, stringLengthMin: number, stringLengthMax: number): void {
     }
 
+    // Check to see if value is in FA
     insert(value: string | number): void {
+
+        // Start from the starting node
+        let current_node = this.graph.get_starting_node();
+
+        // Validate each letter until input crash
+        for (let letter of value.toString()) {
+            const pointers = current_node?.get_pointers();
+
+            if (!pointers) return;
+
+            let found = false;
+
+            // Search through pointers to see fi weight matches
+            pointers.forEach((weights, node) => {
+                if (weights.includes(letter)) {
+                    current_node = node;
+                    found = true;
+                }
+            });
+
+            // If no matches, input crash
+            if (!found) {
+                alert("Input Crash");
+                return
+            }
+        }
+
+        // Check to see if the last landed node is a final state (If not, input crash)
+        if (current_node == null || !this.graph.is_final_node(current_node.get_value())) {
+            alert("Input Crash");
+            return
+        }
+
+        alert("Yes, the string is in the machine!");
+
     }
 
 }

@@ -75,7 +75,9 @@ export class FA_Graph {
         return this.starting_node == this.nodes.get(value);
     }
 
-
+    get_starting_node() {
+        return this.starting_node;
+    }
 
 
 }

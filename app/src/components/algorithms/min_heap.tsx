@@ -121,7 +121,6 @@ export class MinHeap implements Algorithm {
         this.tree?.add(value);
 
         this.animator.addInstruction(new TreeAddInstruction(this.tree?.length - 1, value, this.nodes))
-
         this.heapifyUp();
 
         this.animator.processInstructions();
@@ -218,8 +217,10 @@ export class MinHeap implements Algorithm {
     showClear: boolean = true;
     showDelete: boolean = true;
     showInsert: boolean = true;
+    insert_name: string = "insert";
     showRandomize: boolean = true;
     showSearch: boolean = true;
+    showField: boolean = true;
 
     /*heapifyDownRecursive(cur_index: number): void {
 

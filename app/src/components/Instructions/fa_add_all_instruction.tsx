@@ -51,28 +51,35 @@ export class FAAddAllInstruction implements Instruction {
             if (is_starting_node) {
                 const startNodePos = pos;
 
-                // Calculate vector from layout center to starting node
+                // Vector from layout center to starting node
                 const vx = startNodePos.x - layoutCenterX;
                 const vy = startNodePos.y - layoutCenterY;
 
                 // Normalize the vector
                 const magnitude = Math.sqrt(vx * vx + vy * vy);
-                const unitVx = magnitude === 0 ? 0 : vx / magnitude;
-                const unitVy = magnitude === 0 ? 0 : vy / magnitude;
+                let unitVx = magnitude === 0 ? 0 : vx / magnitude;
+                let unitVy = magnitude === 0 ? 0 : vy / magnitude;
+
+                // 🔁 Rotate the unit vector by desired angle (e.g., 30 degrees)
+                const angleDegrees = 80;
+                const angleRadians = angleDegrees * (Math.PI / 180);
+
+                const rotatedVx = unitVx * Math.cos(angleRadians) - unitVy * Math.sin(angleRadians);
+                const rotatedVy = unitVx * Math.sin(angleRadians) + unitVy * Math.cos(angleRadians);
 
                 const arrowLength = 50;
 
-                // Calculate the start point of the arrow
-                const arrowStartX = startNodePos.x + unitVx * arrowLength;
-                const arrowStartY = startNodePos.y + unitVy * arrowLength;
+                // Arrow start (offset from the node in rotated direction)
+                const arrowStartX = startNodePos.x + rotatedVx * arrowLength;
+                const arrowStartY = startNodePos.y + rotatedVy * arrowLength;
 
-                // The end point of the arrow is the starting node position
+                // Arrow end at the node
                 const arrowEndX = startNodePos.x;
                 const arrowEndY = startNodePos.y;
 
-                // Create the starting arrow line
-                this.createLine(linesGroup, {x: arrowStartX, y: arrowStartY}, {x: arrowEndX, y: arrowEndY});
+                this.createLine(linesGroup, { x: arrowStartX, y: arrowStartY }, { x: arrowEndX, y: arrowEndY });
             }
+
         });
 
         // Draw connectors
@@ -95,7 +102,48 @@ export class FAAddAllInstruction implements Instruction {
                     const [targetIndex, _] = targetEntry;
                     const target_node_pos = this.getPosition(targetIndex, total, 350, 200);
 
-                    if (this.hasMutualPointer(value, pointer.get_value())){
+                    // Loop arrow back to self - if value and pointer are equal
+                    if (value == pointer.get_value()) {
+                        // Calculate angle of the node from the layout center
+                        const nodeAngle = Math.atan2(current_node_pos.y - layoutCenterY, current_node_pos.x - layoutCenterX);
+
+                        const loopRadius = 40;
+                        const angleOffset = Math.PI / 6;
+
+                        let startAngleRad, endAngleRad;
+
+                        startAngleRad = nodeAngle - angleOffset;
+                        endAngleRad = nodeAngle + angleOffset;
+
+                        // Calculate start and end points on the node's circumference
+                        const startX = current_node_pos.x + 20 * Math.cos(startAngleRad);
+                        const startY = current_node_pos.y + 20 * Math.sin(startAngleRad);
+                        const endX = current_node_pos.x + 20 * Math.cos(endAngleRad);
+                        const endY = current_node_pos.y + 20 * Math.sin(endAngleRad);
+
+                        // Calculate control point for the arc
+                        // Position the control point further out along the radial direction
+                        const controlPointDistance = 20 + loopRadius * 2;
+                        const controlX = current_node_pos.x + controlPointDistance * Math.cos(nodeAngle);
+                        const controlY = current_node_pos.y + controlPointDistance * Math.sin(nodeAngle);
+
+                        // SVG path data for a self-loop using a quadratic bezier curve (Q)
+                        const pathData = `M ${startX},${startY} Q ${controlX},${controlY} ${endX},${endY}`;
+
+                        const uniqueId = `curved-path-${pathIdCounter++}`;
+
+                        const selfLoopPath = linesGroup.append("path")
+                            .attr("id", uniqueId)
+                            .attr("d", pathData)
+                            .attr("fill", "none")
+                            .attr("stroke", "black")
+                            .attr("stroke-width", 2)
+                            .attr("marker-end", "url(#arrow)");
+
+                        // Create label for the self-loop
+                        this.createLineLabel(linesGroup, selfLoopPath, weights as string[]);
+                    }
+                    else if (this.hasMutualPointer(value, pointer.get_value())){
                         const curvedPath = this.createCurvedLine(linesGroup, current_node_pos, target_node_pos, 0.12);
                         this.createLineLabel(linesGroup, curvedPath, weights as string[]);
                     }

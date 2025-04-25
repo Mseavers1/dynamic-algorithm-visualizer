@@ -4,6 +4,7 @@ import {FA_Graph} from "../structures/fa_graph";
 import {FAAddAllInstruction} from "../Instructions/fa_add_all_instruction";
 import * as d3 from "d3";
 import {FAHighlightInstruction} from "../Instructions/highlight_fa_node_instruction";
+import {FA_Node} from "../structures/fa_node";
 
 export type stateValues = {
     state: string;
@@ -189,8 +190,9 @@ export class FATransition implements Algorithm {
 
         // Start from the starting node
         let current_node = this.graph.get_starting_node();
+        let prev_node: FA_Node | null = null;
 
-        this.animator.addInstruction(new FAHighlightInstruction(2));
+        this.animator.addInstruction(new FAHighlightInstruction(current_node?.get_value() as string, "START"));
 
         // Validate each letter until input crash
         for (let letter of value.toString()) {
@@ -200,29 +202,38 @@ export class FATransition implements Algorithm {
 
             let found = false;
 
-            // Search through pointers to see fi weight matches
-            pointers.forEach((weights, node) => {
+            // Search through pointers to see if weight matches
+            pointers.forEach((weights: (string | number)[], node: FA_Node) => {
                 if (weights.includes(letter)) {
+                    prev_node = current_node;
                     current_node = node;
                     found = true;
                 }
             });
 
+            if (prev_node != null) {
+                this.animator.addInstruction(
+                    new FAHighlightInstruction(
+                        (prev_node as FA_Node).get_value() as string,
+                        current_node?.get_value() as string
+                    )
+                );
+            }
+
             // If no matches, input crash
             if (!found) {
                 alert("Input Crash");
-                return
+                break;
             }
         }
 
         // Check to see if the last landed node is a final state (If not, input crash)
         if (current_node == null || !this.graph.is_final_node(current_node.get_value())) {
             alert("Input Crash");
-            return
         }
 
         this.animator.processInstructions();
-        alert("Yes, the string is in the machine!");
+        //alert("Yes, the string is in the machine!");
 
     }
 

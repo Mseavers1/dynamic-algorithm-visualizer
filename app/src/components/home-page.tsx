@@ -201,8 +201,14 @@ const HomePage: React.FC = () => {
             </div>
 
             {/** Credits Section **/}
-            <div id="credits" className="min-h-screen text-white flex items-center justify-center">
+            <div id="credits" className="min-h-screen text-white flex flex-col items-center justify-center px-4 md:px-12 lg:px-24 space-y-6">
                 <h2 className="text-4xl">Credits</h2>
+
+                <section className="text-center space-y-4">
+                    <p>
+                        Dr. David Galles Visualizer: https://www.cs.usfca.edu/~galles/visualization/Algorithms.html
+                    </p>
+                </section>
             </div>
         </div>
     );

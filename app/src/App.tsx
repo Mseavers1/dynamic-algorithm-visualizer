@@ -1,7 +1,7 @@
 import '@fontsource/roboto';
 import '@fontsource/pacifico';
 import './App.css';
-import {Route, Routes, useLocation} from "react-router-dom";
+import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 
 import AlgorithmsPage from "./components/algorithms-page";
 import HomePage from "./components/home-page";
@@ -12,6 +12,7 @@ import React from "react";
 function App() {
 
     const loc = useLocation();
+    const nav = useNavigate();
 
     const mainHeader = () => {
         return (
@@ -30,12 +31,16 @@ function App() {
                 {/* Buttons */}
                 <div className="flex space-x-3 md:space-x-6 lg:space-x-8">
                     <button
-                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]">
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => {nav('/')}}
+                    >
                         Home
                     </button>
 
                     <button
-                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]">
+                        className="font-roboto bg-transparent text-gray-300 px-6 py-3 rounded-md hover:text-wkuYellow hover:scale-105 transition-all drop-shadow-[3px_3px_2px_rgba(0,0,0,0.5)]"
+                        onClick={() => {nav('/algorithms')}}
+                    >
                         Algorithms
                     </button>
                 </div>

@@ -15,7 +15,7 @@ const AlgorithmsPage: React.FC = () => {
     return (
         <div
             className="bg-white grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 h-screen pt-28 px-4 items-start justify-items-center">
-            <Card
+            { /*<Card
                 title="Data Structures"
                 content={(
                     <ul>
@@ -119,9 +119,9 @@ const AlgorithmsPage: React.FC = () => {
                         <ListItem text="Rabin-Karp Algorithm" onClick={test} />
                     </ul>
                 )}
-            />
+            /> */}
             <Card
-                title="Misc Algorithms"
+                title="Finite Automata"
                 content={(
                     <ul>
                         <ListItem text="FA Generator (transition table)" onClick={() => nav("/algorithms/animate/fa-transition")} />

@@ -7,7 +7,7 @@ type CardProps = {
 
 const Card: React.FC<CardProps> = ({ title, content }) => {
 
-    const [isExpanded, setExpanded] = React.useState(false);
+    const [isExpanded, setExpanded] = React.useState(true);
 
     const toggleCardBody = () => {
         setExpanded(!isExpanded);

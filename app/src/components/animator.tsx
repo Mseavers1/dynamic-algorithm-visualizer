@@ -266,16 +266,16 @@ const Animator: React.FC = () => {
         return (
             <div
                 className="fixed top-20 xl:top-10 left-0 right-0 bg-animator-bars text-white flex items-center h-20 lg:h-10 xl:h-10 2xl:h-[3.5rem] p-4 gap-5 z-50">
-                {!algorithm?.showField ? "" :<input
+                {!algorithm?.showField ? "" : <input
                     type="text"
                     className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
                     placeholder="Enter value here"
                     value={value}
                     disabled={isAnimating || !algorithm?.showField}
                     onChange={(e) => setValue(e.target.value)}
-                /> }
+                />}
 
-                {!algorithm?.showInsert ? "" :<button
+                {!algorithm?.showInsert ? "" : <button
                     className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onClick={() => {
                         algorithm?.insert(value);
@@ -295,7 +295,7 @@ const Animator: React.FC = () => {
                     Delete
                 </button>}
 
-                {!algorithm?.showSearch ? "" :<button
+                {!algorithm?.showSearch ? "" : <button
                     className="px-4 py-2 xl:px-2 xl:py-0.5 2xl:px-4 2xl:py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 active:scale-90 transition transform duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isAnimating || !algorithm?.showSearch}>
                     Search
@@ -311,7 +311,16 @@ const Animator: React.FC = () => {
                     Clear
                 </button>}
 
-                {!algorithm?.showRandomize ? "" :randomButton()}
+                <button
+                    className="flex items-center justify-center bg-blue-500 p-2 text-white rounded-xl shadow-md active:scale-90 transition transform duration-150 ease-out hover:bg-blue-600 focus:outline-none"
+                    onClick={() => {
+                        algorithm?.clear();
+                        algorithm?.parse(inputTableInput);
+                    }}>
+                    Generate FA
+                </button>
+
+                {!algorithm?.showRandomize ? "" : randomButton()}
             </div>
         );
     };
@@ -324,16 +333,11 @@ const Animator: React.FC = () => {
             <div
                 className="fixed bottom-6 left-0 right-0 bg-animator-bars text-white flex items-center justify-between p-4 h-30 lg:h-10 xl:h-10 2xl:h-[3.5rem]">
 
-                <button
+                {/*<button
                     className="flex items-center justify-center 2xl:w-10 2xl:h-10 xl:w-7 xl:h-7 bg-blue-500 text-white rounded-xl shadow-md active:scale-90 transition transform duration-150 ease-out hover:bg-blue-600 focus:outline-none">
                     <Pause size={window.innerWidth < 1280 ? 24 : 20}/>
-                </button>
+                </button> */}
 
-                <button
-                    className="flex items-center justify-center bg-blue-500 p-2 text-white rounded-xl shadow-md active:scale-90 transition transform duration-150 ease-out hover:bg-blue-600 focus:outline-none"
-                    onClick={() => {algorithm?.clear(); algorithm?.parse(inputTableInput);}}>
-                    Generate FA
-                </button>
             </div>
         );
     };

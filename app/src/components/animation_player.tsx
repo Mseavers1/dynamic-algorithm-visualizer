@@ -32,7 +32,23 @@ export class AnimationPlayer {
         // Gets and removes the first instruction
         const instruction = this.instructions.shift();
 
-        const svg = d3.select("#svg-container").attr("width", 500).attr("height", 500);
+        const svg = d3.select("#svg-container").attr("width", 600).attr("height", 500);
+
+        if (svg.select("defs").empty()) {
+            const defs = svg.append("defs");
+
+            defs.append("marker")
+                .attr("id", "arrow")
+                .attr("viewBox", "0 0 10 10")
+                .attr("refX", 28)
+                .attr("refY", 5)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto-start-reverse")
+                .append("path")
+                .attr("d", "M 0 0 L 10 5 L 0 10 z")
+                .attr("fill", "black");
+        }
 
         if (instruction) {
             await instruction.process(svg);

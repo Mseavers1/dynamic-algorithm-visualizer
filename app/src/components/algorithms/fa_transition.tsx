@@ -3,6 +3,9 @@ import {AnimationPlayer} from "../animation_player";
 import {FAAddInstruction, Color} from "../Instructions/fa_add_instruction";
 import {TreeAddInstruction} from "../Instructions/tree_add_instruction";
 import * as d3 from "d3";
+import {useState} from "react";
+import {FA_Graph} from "../structures/fa_graph";
+import {FAAddAllInstruction} from "../Instructions/fa_add_all_instruction";
 
 export type stateValues = {
     state: string;
@@ -11,11 +14,9 @@ export type stateValues = {
 
 export class FATransition implements Algorithm {
 
+    private graph: FA_Graph;
+
     private animator: AnimationPlayer;
-    private states: Record<string, stateValues[]>;
-    private startingState: string | null;
-    private finalStates: string[];
-    private colorUsed: Color[];
 
     public showClear: boolean = true;
     public showDelete: boolean = false;
@@ -26,11 +27,8 @@ export class FATransition implements Algorithm {
     constructor(
         animator: AnimationPlayer,
     ) {
+        this.graph = new FA_Graph();
         this.animator = animator;
-        this.states = {};
-        this.startingState = null;
-        this.finalStates = [];
-        this.colorUsed = [];
     }
 
     getRandomInt(min: number, max: number): number {
@@ -38,7 +36,7 @@ export class FATransition implements Algorithm {
     }
 
 
-    generateNewColor(): Color {
+    /* generateNewColor(): Color {
         let c: Color = {r: this.getRandomInt(0, 255), g: this.getRandomInt(0, 255), b: this.getRandomInt(0, 255), a: 1};
 
         let exists = this.colorUsed.some(
@@ -69,26 +67,28 @@ export class FATransition implements Algorithm {
         this.colorUsed.push(c);
 
         return c;
-    }
+    } */
 
     parse(area: string) {
 
         // Is code valid?
         const lines = area.split("\n");
         let valid = true;
-        let currentState = "";
+        let currentNodeValue: string = "";
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
 
             // Ignore comments
-            if (line.startsWith('#')) continue;
+            if (line.startsWith('#') || line.startsWith('//')) continue;
 
             // If it doesn't start with a space, it is the start of a state definition
             if (!line.startsWith(' ')) {
-                const state = line.split(":")[0];
-                this.states[state] = [];
-                currentState = state;
+                const value = line.split(":")[0];
+
+                if (this.graph.get_node(value) == null) this.graph.create_node(value);
+
+                currentNodeValue = value;
             }
 
             // If it does, it is a value in a state definition
@@ -99,40 +99,50 @@ export class FATransition implements Algorithm {
 
                 // Check if there is a : - if so, its a value, if not, its either Start or Final keywords
                 if (new_line.includes(':')) {
-                    const state = new_line.split(":")[0];
-                    const values = new_line.split(":")[1].split(",");
+                    const pointer = new_line.split(":")[0];
+                    const weights = new_line
+                        .split(":")[1]
+                        .split(",")
+                        .map(w => w.trim());
 
-                    this.states[currentState].push({state: state, values: values});
+                    //this.states[currentState].push({state: state, values: values});
+
+                    if (this.graph.get_node(pointer) == null) this.graph.create_node(pointer);
+
+                    this.graph.add_node_pointers(currentNodeValue, weights, pointer);
                 }
                 // Keywords
                 else {
 
                     // Set the starting state
                     if (new_line.toUpperCase() === "START") {
-                        this.startingState = currentState;
+                        this.graph.set_starting_node(currentNodeValue);
                     }
 
                     // Add onto the final states
                     if (new_line.toUpperCase() === "FINAL") {
-                        this.finalStates.push(currentState);
+                        this.graph.add_final_node(currentNodeValue);
                     }
                 }
             }
         }
 
         // Is there a starting state? If not, cause error
-        if (this.startingState === null) {
+        if (!this.graph.has_starting_node()) {
             valid = false;
         }
 
         // Is there any final states? Is not, cause error
-        if (this.finalStates.length <= 0) {
+        if (!this.graph.has_one_final_node()) {
             valid = false;
         }
 
         // If valid, generate animation / structure
         if (valid) {
 
+            this.animator.addInstruction(new FAAddAllInstruction(this.graph));
+
+            /*
             let indexStates : Record<string, number> | null = {};
             let colorStates : Record<string, Color> = {};
 
@@ -154,7 +164,7 @@ export class FATransition implements Algorithm {
                 this.animator.addInstruction(new FAAddInstruction(index, state, Object.keys(this.states).length, this.states[state], indexStates, colorStates, isStarting, isFinal));
 
                 index += 1;
-            }
+            } */
 
             this.animator.processInstructions();
         }
@@ -162,6 +172,7 @@ export class FATransition implements Algorithm {
     }
 
     clear(): void {
+        this.graph = new FA_Graph();
         const svg = d3.select("#svg-container").attr("width", 500).attr("height", 500);
         svg.selectAll("*").remove();
 

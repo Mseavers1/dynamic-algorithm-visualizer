@@ -399,9 +399,10 @@ const Animator: React.FC = () => {
 
                 {inputTable()}
 
-                <svg id="svg-container" width="500" height="500">
+                <div style={{width: 600, height: 500}}>
+                    <svg id="svg-container" width="600" height="500"></svg>
+                </div>
 
-                </svg>
 
             </div>
 

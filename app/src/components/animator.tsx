@@ -340,7 +340,7 @@ const Animator: React.FC = () => {
     const inputTable = () => {
 
         const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-            const textarea = e.target as HTMLTextAreaElement; // Type the target as HTMLTextAreaElement
+            const textarea = e.target as HTMLTextAreaElement;
             const cursorPosition = textarea.selectionStart;
             const textBeforeCursor = textarea.value.substring(0, cursorPosition);
             const textAfterCursor = textarea.value.substring(cursorPosition);
@@ -348,8 +348,15 @@ const Animator: React.FC = () => {
             if (e.key === 'Tab') {
                 const indentation = '  '.repeat(2);
 
+                const newCursorPosition = cursorPosition + indentation.length;
+
                 // Set the new value of textarea with the correct indentation
                 setInputTableInput(textBeforeCursor + indentation + textAfterCursor);
+
+                setTimeout(() => {
+                    textarea.selectionStart = newCursorPosition;
+                    textarea.selectionEnd = newCursorPosition;
+                }, 0);
 
                 e.preventDefault();
             }

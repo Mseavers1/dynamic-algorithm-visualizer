@@ -17,8 +17,10 @@ export class FAAddAllInstruction implements Instruction {
     async process(svg: Selection<BaseType, unknown, HTMLElement, any>): Promise<void> {
         const nodeTransitions: Promise<void>[] = [];
         const labelTransitions: Promise<void>[] = [];
-        // Ensure the 'lines' group is added first so lines are behind nodes and labels
         const linesGroup = svg.append("g").attr("id", "lines") as unknown as d3.Selection<SVGGElement, unknown, null, undefined>;
+
+        const layoutCenterX = 350;
+        const layoutCenterY = 200;
 
         const nodesGroup = (svg.append("g") as unknown) as Selection<SVGGElement, unknown, null, undefined>;
 
@@ -28,15 +30,49 @@ export class FAAddAllInstruction implements Instruction {
 
         // Draw all nodes
         this.graph.get_nodes().forEach((node, value) => {
-            const pos = this.getPosition(index, total, 350, 200);
-            const current_node = this.createNode(nodesGroup, pos.x, pos.y);
+            const pos = this.getPosition(index, total, layoutCenterX, layoutCenterY);
+            const is_starting_node = this.graph.is_starting_node(value);
+            const is_final_node = this.graph.is_final_node(value); // Get the final node status
+
+            // Create the node(s) and get the selections
+            const nodeSelections = this.createNode(nodesGroup, pos.x, pos.y, 20, "node", 0, is_final_node);
+
             const label = this.createLabel(nodesGroup, pos, value as string)
-            const node_transition = this.applyNodeTransition(current_node, pos);
+
+            // Apply transition to both the main circle and the outer ring
+            const node_transition = this.applyNodeTransition(nodeSelections.mainCircle, nodeSelections.outerRing, pos);
             const label_transition = this.applyLabelTransition(label, pos);
 
-            indexNodes.set(value, [index++, current_node]);
+            indexNodes.set(value, [index++, nodeSelections.mainCircle]);
             nodeTransitions.push(node_transition);
             labelTransitions.push(label_transition);
+
+            // If node is a starting state, add a line to it pointing away from the center
+            if (is_starting_node) {
+                const startNodePos = pos;
+
+                // Calculate vector from layout center to starting node
+                const vx = startNodePos.x - layoutCenterX;
+                const vy = startNodePos.y - layoutCenterY;
+
+                // Normalize the vector
+                const magnitude = Math.sqrt(vx * vx + vy * vy);
+                const unitVx = magnitude === 0 ? 0 : vx / magnitude;
+                const unitVy = magnitude === 0 ? 0 : vy / magnitude;
+
+                const arrowLength = 50;
+
+                // Calculate the start point of the arrow
+                const arrowStartX = startNodePos.x + unitVx * arrowLength;
+                const arrowStartY = startNodePos.y + unitVy * arrowLength;
+
+                // The end point of the arrow is the starting node position
+                const arrowEndX = startNodePos.x;
+                const arrowEndY = startNodePos.y;
+
+                // Create the starting arrow line
+                this.createLine(linesGroup, {x: arrowStartX, y: arrowStartY}, {x: arrowEndX, y: arrowEndY});
+            }
         });
 
         // Draw connectors
@@ -61,13 +97,11 @@ export class FAAddAllInstruction implements Instruction {
 
                     if (this.hasMutualPointer(value, pointer.get_value())){
                         const curvedPath = this.createCurvedLine(linesGroup, current_node_pos, target_node_pos, 0.12);
-                        // Pass the curved path selection to createLineLabel
                         this.createLineLabel(linesGroup, curvedPath, weights as string[]);
                     }
                     else
                     {
                         const straightLine = this.createLine(linesGroup, current_node_pos, target_node_pos);
-                        // Use a type assertion here to tell TypeScript it's the correct union type
                         this.createLineLabel(linesGroup, straightLine as d3.Selection<SVGLineElement | SVGPathElement, unknown, null, undefined>, weights as string[]);
                     }
                 });
@@ -79,12 +113,11 @@ export class FAAddAllInstruction implements Instruction {
     }
 
     // Creates a label for a line (edge) {Mostly generated through gpt and gemini -- edited by michael}
-    // Creates labels for a line (edge) - handles multiple weights
     createLineLabel(
         group: d3.Selection<SVGGElement, unknown, null, undefined>,
         lineOrPath: d3.Selection<SVGLineElement | SVGPathElement, unknown, null, undefined>,
-        txts: string[] // Accept an array of strings
-    ): d3.Selection<SVGTextElement, unknown, null, undefined>[] { // Return an array of text selections
+        txts: string[]
+    ): d3.Selection<SVGTextElement, unknown, null, undefined>[] {
 
         const isLine = lineOrPath.node() instanceof SVGLineElement;
         const createdLabels: d3.Selection<SVGTextElement, unknown, null, undefined>[] = [];
@@ -133,7 +166,7 @@ export class FAAddAllInstruction implements Instruction {
                 const startOffset = (80 - (txts.length - 1) * 2) + ((index - (txts.length - 1) / 2) * 5);
 
                 text.append("textPath")
-                    .attr("xlink:href", `#${pathId}`) // Use the ID directly
+                    .attr("xlink:href", `#${pathId}`)
                     .attr("startOffset", `${startOffset}%`)
                     .attr("text-anchor", "middle")
                     .text(txt);
@@ -141,7 +174,7 @@ export class FAAddAllInstruction implements Instruction {
             createdLabels.push(text);
         });
 
-        return createdLabels; // Return the array of created labels
+        return createdLabels;
     }
 
     hasMutualPointer(from: string | number, to: string | number): boolean {
@@ -149,14 +182,6 @@ export class FAAddAllInstruction implements Instruction {
         const toPointers = this.graph.get_pointers(to);
 
         if (!fromPointers || !toPointers) return false;
-
-        // Console logs can be removed in production code
-        // console.log("From Node:", this.graph.get_node(from));
-        // console.log("To Node:", this.graph.get_node(to));
-        // console.log("From Pointers:", fromPointers);
-        // console.log("To Pointers:", toPointers);
-        // console.log("From has To?", fromPointers.has(this.graph.get_node(to) as FA_Node));
-        // console.log("To has From?", toPointers.has(this.graph.get_node(from) as FA_Node));
 
         return fromPointers.has(this.graph.get_node(to) as FA_Node) && toPointers.has(this.graph.get_node(from) as FA_Node);
     }
@@ -185,10 +210,10 @@ export class FAAddAllInstruction implements Instruction {
 
         const pathData = `M ${from.x} ${from.y} Q ${controlX} ${controlY}, ${to.x} ${to.y}`;
 
-        const uniqueId = `curved-path-${pathIdCounter++}`; // Generate a unique ID
+        const uniqueId = `curved-path-${pathIdCounter++}`;
 
         return group.append("path")
-            .attr("id", uniqueId) // Assign the unique ID
+            .attr("id", uniqueId)
             .attr("d", pathData)
             .attr("fill", "none")
             .attr("stroke", "black")
@@ -229,33 +254,71 @@ export class FAAddAllInstruction implements Instruction {
     }
 
 
-    createNode(nodesGroup: d3.Selection<SVGGElement, unknown, null, undefined>, cx: number, cy: number, r: number = 20,
-               className: string = "node", opacity: number = 0
-    ): d3.Selection<SVGCircleElement, unknown, null, undefined> {
+    createNode(
+        nodesGroup: d3.Selection<SVGGElement, unknown, null, undefined>,
+        cx: number,
+        cy: number,
+        r: number = 20,
+        className: string = "node",
+        initialOpacity: number = 0,
+        isFinalNode: boolean = false
+    ): { mainCircle: d3.Selection<SVGCircleElement, unknown, null, undefined>, outerRing?: d3.Selection<SVGCircleElement, unknown, null, undefined> } {
 
-        return nodesGroup.append("circle")
+        // Create the main node circle
+        const mainCircle = nodesGroup.append("circle")
             .attr("cx", cx)
             .attr("cy", cy)
             .attr("r", r)
             .attr("class", className)
-            .style("opacity", opacity);
+            .style("opacity", initialOpacity);
+
+        let outerRing: d3.Selection<SVGCircleElement, unknown, null, undefined> | undefined = undefined;
+
+        // If it's a final node, add a second circle with a larger radius
+        if (isFinalNode) {
+            const outerRadius = r + 5;
+            outerRing = nodesGroup.append("circle")
+                .attr("cx", cx)
+                .attr("cy", cy)
+                .attr("r", outerRadius)
+                .attr("class", className + " final-node-ring")
+                .style("fill", "none")
+                .style("stroke", "black")
+                .style("stroke-width", 2)
+                .style("opacity", initialOpacity);
+        }
+
+        // Return an object containing both selections
+        return { mainCircle, outerRing };
     }
 
     applyNodeTransition(
-        node: d3.Selection<SVGCircleElement, unknown, null, undefined>,
+        mainCircle: d3.Selection<SVGCircleElement, unknown, null, undefined>,
+        outerRing: d3.Selection<SVGCircleElement, unknown, null, undefined> | undefined, // Accept the optional outer ring
         position: { x: number; y: number },
         duration: number = 1000
     ): Promise<void> {
         return new Promise((resolve) => {
-            node.transition()
+
+            const mainCircleTransition = mainCircle.transition()
                 .duration(duration)
                 .attr("cx", position.x)
                 .attr("cy", position.y)
                 .style("opacity", 1)
                 .attr("stroke", "black")
                 .attr("stroke-width", 2)
-                .attr("fill", "white")
-                .on("end", () => resolve());
+                .attr("fill", "white");
+
+            // If an outer ring exists, apply the same transition to it
+            if (outerRing) {
+                outerRing.transition()
+                    .duration(duration)
+                    .attr("cx", position.x)
+                    .attr("cy", position.y)
+                    .style("opacity", 1);
+            }
+
+            mainCircleTransition.on("end", () => resolve());
         });
     }
 

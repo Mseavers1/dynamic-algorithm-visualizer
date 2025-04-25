@@ -71,6 +71,10 @@ export class FA_Graph {
         return this.final_nodes.includes(node);
     }
 
+    is_starting_node(value: string | number) {
+        return this.starting_node == this.nodes.get(value);
+    }
+
 
 
 

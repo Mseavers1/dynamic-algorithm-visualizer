@@ -5,6 +5,11 @@ import {FAAddAllInstruction} from "../Instructions/fa_add_all_instruction";
 import * as d3 from "d3";
 import {FAHighlightInstruction} from "../Instructions/highlight_fa_node_instruction";
 import {FA_Node} from "../structures/fa_node";
+import {FAAddInputInstruction} from "../Instructions/fa_add_input_instruction";
+import {FAFadeAllInstruction} from "../Instructions/fa_fade_all_instruction";
+import {FAShowArrowInstruction} from "../Instructions/fa_show_arrow_instruction";
+import {FAClearInputInstruction} from "../Instructions/fa_clear_input_instruction";
+import {FAShowStateInstruction} from "../Instructions/fa_show_state_instruction";
 
 export type stateValues = {
     state: string;
@@ -188,14 +193,25 @@ export class FATransition implements Algorithm {
     // Check to see if value is in FA
     insert(value: string | number): void {
 
+        // If there are no nodes in graph or input is empty - stop
+        if (this.graph.get_nodes().size <= 0 || value == "") return;
+
+        this.animator.addInstruction(new FAClearInputInstruction());
+
         // Start from the starting node
         let current_node = this.graph.get_starting_node();
         let prev_node: FA_Node | null = null;
 
+        this.animator.addInstruction(new FAAddInputInstruction((value as string)));
+        this.animator.addInstruction(new FAFadeAllInstruction());
         this.animator.addInstruction(new FAHighlightInstruction(current_node?.get_value() as string, "START"));
+        this.animator.addInstruction(new FAFadeAllInstruction());
+
+        let i = 0;
 
         // Validate each letter until input crash
         for (let letter of value.toString()) {
+            this.animator.addInstruction(new FAShowArrowInstruction(i++));
             const pointers = current_node?.get_pointers();
 
             if (!pointers) return;
@@ -211,25 +227,34 @@ export class FATransition implements Algorithm {
                 }
             });
 
-            if (prev_node != null) {
-                this.animator.addInstruction(
-                    new FAHighlightInstruction(
-                        (prev_node as FA_Node).get_value() as string,
-                        current_node?.get_value() as string
-                    )
-                );
-            }
-
             // If no matches, input crash
             if (!found) {
-                alert("Input Crash");
-                break;
+                this.animator.addInstruction(new FAFadeAllInstruction());
+                this.animator.addInstruction(new FAShowStateInstruction(false));
+
+                this.animator.processInstructions();
+                return;
+            } else {
+
+                if (prev_node != null) {
+
+                    this.animator.addInstruction(new FAFadeAllInstruction());
+
+                    this.animator.addInstruction(
+                        new FAHighlightInstruction(
+                            (prev_node as FA_Node).get_value() as string,
+                            current_node?.get_value() as string
+                        )
+                    );
+                }
             }
         }
 
         // Check to see if the last landed node is a final state (If not, input crash)
         if (current_node == null || !this.graph.is_final_node(current_node.get_value())) {
-            alert("Input Crash");
+            this.animator.addInstruction(new FAShowStateInstruction(false));
+        } else {
+            this.animator.addInstruction(new FAShowStateInstruction(true));
         }
 
         this.animator.processInstructions();

@@ -330,7 +330,7 @@ const Animator: React.FC = () => {
 
                 <button
                     className="flex items-center justify-center bg-blue-500 p-2 text-white rounded-xl shadow-md active:scale-90 transition transform duration-150 ease-out hover:bg-blue-600 focus:outline-none"
-                    onClick={() => algorithm?.parse(inputTableInput)}>
+                    onClick={() => {algorithm?.clear(); algorithm?.parse(inputTableInput);}}>
                     Generate FA
                 </button>
             </div>

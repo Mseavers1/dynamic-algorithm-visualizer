@@ -1,11 +1,9 @@
 import {Algorithm} from "./algorithm_interface";
 import {AnimationPlayer} from "../animation_player";
-import {FAAddInstruction, Color} from "../Instructions/fa_add_instruction";
-import {TreeAddInstruction} from "../Instructions/tree_add_instruction";
-import * as d3 from "d3";
-import {useState} from "react";
 import {FA_Graph} from "../structures/fa_graph";
 import {FAAddAllInstruction} from "../Instructions/fa_add_all_instruction";
+import * as d3 from "d3";
+import {FAHighlightInstruction} from "../Instructions/highlight_fa_node_instruction";
 
 export type stateValues = {
     state: string;
@@ -192,6 +190,8 @@ export class FATransition implements Algorithm {
         // Start from the starting node
         let current_node = this.graph.get_starting_node();
 
+        this.animator.addInstruction(new FAHighlightInstruction(2));
+
         // Validate each letter until input crash
         for (let letter of value.toString()) {
             const pointers = current_node?.get_pointers();
@@ -221,6 +221,7 @@ export class FATransition implements Algorithm {
             return
         }
 
+        this.animator.processInstructions();
         alert("Yes, the string is in the machine!");
 
     }

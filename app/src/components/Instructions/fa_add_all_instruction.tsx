@@ -12,6 +12,7 @@ export class FAAddAllInstruction implements Instruction {
 
     constructor(graph: FA_Graph) {
         this.graph = graph;
+        pathIdCounter = 0
     }
 
     async process(svg: Selection<BaseType, unknown, HTMLElement, any>): Promise<void> {
@@ -60,7 +61,6 @@ export class FAAddAllInstruction implements Instruction {
                 let unitVx = magnitude === 0 ? 0 : vx / magnitude;
                 let unitVy = magnitude === 0 ? 0 : vy / magnitude;
 
-                // 🔁 Rotate the unit vector by desired angle (e.g., 30 degrees)
                 const angleDegrees = 80;
                 const angleRadians = angleDegrees * (Math.PI / 180);
 
@@ -130,7 +130,23 @@ export class FAAddAllInstruction implements Instruction {
                         // SVG path data for a self-loop using a quadratic bezier curve (Q)
                         const pathData = `M ${startX},${startY} Q ${controlX},${controlY} ${endX},${endY}`;
 
-                        const uniqueId = `curved-path-${pathIdCounter++}`;
+                        const uniqueId = `line-${pathIdCounter++}`;
+
+                        let defs = linesGroup.select<SVGDefsElement>("defs");
+                        if (defs.empty()) {
+                            defs = linesGroup.append<SVGDefsElement>("defs");
+                        }
+                        defs.append("marker")
+                            .attr("id", `arrow-${uniqueId}`)
+                            .attr("viewBox", "0 0 10 10")
+                            .attr("refX", 28)
+                            .attr("refY", 5)
+                            .attr("markerWidth", 6)
+                            .attr("markerHeight", 6)
+                            .attr("orient", "auto-start-reverse")
+                            .append("path")
+                            .attr("d", "M 0 0 L 10 5 L 0 10 z")
+                            .attr("fill", "black");
 
                         const selfLoopPath = linesGroup.append("path")
                             .attr("id", uniqueId)
@@ -138,7 +154,7 @@ export class FAAddAllInstruction implements Instruction {
                             .attr("fill", "none")
                             .attr("stroke", "black")
                             .attr("stroke-width", 2)
-                            .attr("marker-end", "url(#arrow)");
+                            .attr("marker-end", `url(#arrow-${uniqueId})`);
 
                         // Create label for the self-loop
                         this.createLineLabel(linesGroup, selfLoopPath, weights as string[]);
@@ -231,7 +247,11 @@ export class FAAddAllInstruction implements Instruction {
 
         if (!fromPointers || !toPointers) return false;
 
-        return fromPointers.has(this.graph.get_node(to) as FA_Node) && toPointers.has(this.graph.get_node(from) as FA_Node);
+        // Compare the node values (not the FA_Node instances)
+        const fromPointsTo = Array.from(fromPointers.keys()).some(p => p.get_value() === to);
+        const toPointsTo = Array.from(toPointers.keys()).some(p => p.get_value() === from);
+
+        return fromPointsTo && toPointsTo;
     }
 
 
@@ -258,7 +278,25 @@ export class FAAddAllInstruction implements Instruction {
 
         const pathData = `M ${from.x} ${from.y} Q ${controlX} ${controlY}, ${to.x} ${to.y}`;
 
-        const uniqueId = `curved-path-${pathIdCounter++}`;
+        const uniqueId = `line-${pathIdCounter++}`;
+
+        let defs = group.select<SVGDefsElement>("defs");
+        if (defs.empty()) {
+            defs = group.append<SVGDefsElement>("defs");
+        }
+
+
+        defs.append("marker")
+            .attr("id", `arrow-${uniqueId}`)
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 28)
+            .attr("refY", 5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto-start-reverse")
+            .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 z")
+            .attr("fill", "black");
 
         return group.append("path")
             .attr("id", uniqueId)
@@ -266,7 +304,7 @@ export class FAAddAllInstruction implements Instruction {
             .attr("fill", "none")
             .attr("stroke", "black")
             .attr("stroke-width", 2)
-            .attr("marker-end", "url(#arrow)");
+            .attr("marker-end", `url(#arrow-${uniqueId})`);
     }
 
     createLine(
@@ -277,7 +315,27 @@ export class FAAddAllInstruction implements Instruction {
         strokeWidth: number = 2,
         opacity: number = 1
     ): d3.Selection<SVGLineElement, unknown, null, undefined> {
+        const uniqueId = `line-${pathIdCounter++}`;
+
+        let defs = svgGroup.select<SVGDefsElement>("defs");
+        if (defs.empty()) {
+            defs = svgGroup.append<SVGDefsElement>("defs");
+        }
+
+        defs.append("marker")
+            .attr("id", `arrow-${uniqueId}`)
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 28)
+            .attr("refY", 5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto-start-reverse")
+            .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 z")
+            .attr("fill", "black");
+
         return svgGroup.append("line")
+            .attr("id", uniqueId)
             .attr("x1", start.x)
             .attr("y1", start.y)
             .attr("x2", end.x)
@@ -285,7 +343,7 @@ export class FAAddAllInstruction implements Instruction {
             .attr("stroke", strokeColor)
             .attr("stroke-width", strokeWidth)
             .style("opacity", opacity)
-            .attr("marker-end", "url(#arrow)");
+            .attr("marker-end", `url(#arrow-${uniqueId})`);
     }
 
 

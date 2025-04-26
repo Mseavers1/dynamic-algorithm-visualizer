@@ -6,14 +6,9 @@
 
 ### FA Transitions
 The FA transition visualizer can be found under misc. Use the code editor to create your table. Click GENERATE FA to
-visualize your table. 
+Visualize your table. 
 
-Current Issues:
-- Lines overlapping
-- Animation could be smoother
-- Line label not in a good placement / could be better
-- Error handling
-- pausing / animation speeds
+In the input box, type the input you wish to test. The program visualizes the machine with each step. Once the steps are finished, it will show ACCEPT or REJECT if the language is accepted or not.
 
 ## Libraries
 

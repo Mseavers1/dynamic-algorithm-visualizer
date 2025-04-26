@@ -1,0 +1,39 @@
+{
+  "files": {
+    "main.css": "/dynamic-algorithm-visualizer/static/css/main.766a9b3a.css",
+    "main.js": "/dynamic-algorithm-visualizer/static/js/main.8845ce00.js",
+    "static/js/453.a6a97343.chunk.js": "/dynamic-algorithm-visualizer/static/js/453.a6a97343.chunk.js",
+    "static/media/pacifico-latin-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/pacifico-latin-400-normal.f36bb0347eecd87d78af.woff2",
+    "static/media/pacifico-latin-ext-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/pacifico-latin-ext-400-normal.e12a2413eb43b100497c.woff2",
+    "static/media/pacifico-cyrillic-ext-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/pacifico-cyrillic-ext-400-normal.682f9fb5d72ef074686d.woff2",
+    "static/media/pacifico-latin-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/pacifico-latin-400-normal.14d6c552098c08b689a8.woff",
+    "static/media/pacifico-latin-ext-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/pacifico-latin-ext-400-normal.a23c1ef38ba6c6d9d725.woff",
+    "static/media/pacifico-cyrillic-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/pacifico-cyrillic-400-normal.12b0288f7a1df3155d42.woff2",
+    "static/media/pacifico-cyrillic-ext-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/pacifico-cyrillic-ext-400-normal.846fa4697d95af9f681d.woff",
+    "static/media/roboto-latin-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/roboto-latin-400-normal.297d48e1b5a10c0831a9.woff2",
+    "static/media/roboto-latin-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/roboto-latin-400-normal.047a7839f69b209db815.woff",
+    "static/media/pacifico-cyrillic-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/pacifico-cyrillic-400-normal.62a6feffdc768e3f6e65.woff",
+    "static/media/roboto-cyrillic-ext-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/roboto-cyrillic-ext-400-normal.5cec61a21cc20180fbe1.woff2",
+    "static/media/roboto-cyrillic-ext-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/roboto-cyrillic-ext-400-normal.135d076fa32aa0b4d105.woff",
+    "static/media/roboto-latin-ext-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/roboto-latin-ext-400-normal.2eeae187764baf05867d.woff2",
+    "static/media/roboto-latin-ext-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/roboto-latin-ext-400-normal.27da5b36b6d3a16f53f4.woff",
+    "static/media/pacifico-vietnamese-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/pacifico-vietnamese-400-normal.bd5387ce81f7c383a0a3.woff2",
+    "static/media/roboto-cyrillic-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/roboto-cyrillic-400-normal.a9e19870cf6c4b973427.woff2",
+    "static/media/roboto-cyrillic-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/roboto-cyrillic-400-normal.5d2930082227d172f62c.woff",
+    "static/media/pacifico-vietnamese-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/pacifico-vietnamese-400-normal.e0ad65c3d90312b0416e.woff",
+    "static/media/roboto-greek-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/roboto-greek-400-normal.2c32b1315be61477013a.woff2",
+    "static/media/roboto-greek-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/roboto-greek-400-normal.160a791a8e4f46bca3cc.woff",
+    "static/media/roboto-vietnamese-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/roboto-vietnamese-400-normal.d3f8e26d6c27de8102b6.woff2",
+    "static/media/roboto-vietnamese-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/roboto-vietnamese-400-normal.0dc97c66f9b542d6fa17.woff",
+    "static/media/roboto-greek-ext-400-normal.woff2": "/dynamic-algorithm-visualizer/static/media/roboto-greek-ext-400-normal.1df4abad55796d11a0c8.woff2",
+    "static/media/roboto-greek-ext-400-normal.woff": "/dynamic-algorithm-visualizer/static/media/roboto-greek-ext-400-normal.16eb83b4a3b1ea994243.woff",
+    "index.html": "/dynamic-algorithm-visualizer/index.html",
+    "main.766a9b3a.css.map": "/dynamic-algorithm-visualizer/static/css/main.766a9b3a.css.map",
+    "main.8845ce00.js.map": "/dynamic-algorithm-visualizer/static/js/main.8845ce00.js.map",
+    "453.a6a97343.chunk.js.map": "/dynamic-algorithm-visualizer/static/js/453.a6a97343.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.766a9b3a.css",
+    "static/js/main.8845ce00.js"
+  ]
+}

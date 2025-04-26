@@ -373,10 +373,10 @@ const Animator: React.FC = () => {
 
 
         return (
-            <div className="flex flex-col w-[500px]">
+            <div className="flex flex-col">
                 <textarea
                     id="fa-input"
-                    className="w-full max-w-lg h-[1000px] p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 z-10 resize-none"
+                    className="w-full max-w-lg h-[500px] max-h-screen p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 z-10 resize-none"
                     value={inputTableInput}
                     onChange={(e) => {setInputTableInput(e.target.value)}}
                     placeholder={`# Here is an example of a transition table:
